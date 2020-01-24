@@ -15,9 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .apps.core.views import IndexView
+from django.views.generic import RedirectView
+from django.contrib.auth import views as auth_views
+from .apps.core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',  IndexView.as_view(), name='index')
+    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+    path('accounts/logout/', views.LogoutView.as_view(), name='logout'),
+    path('', RedirectView.as_view(pattern_name='settings', permanent=False)),
+    path('settings/',  views.SettingsView.as_view(), name='settings'),
+    path('user/add/', views.UserCreateView.as_view(), name='user-create'),
+    path('user/<int:pk>/edit/', views.UserEditView.as_view(), name='user-edit'),
+    path('user/<int:pk>/delete/', views.UserDeleteView.as_view(), name='user-delete'),
 ]

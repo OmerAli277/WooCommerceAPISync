@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block body %}
+    <!-- [ navigation menu ] start -->
+    <nav class="pcoded-navbar navbar-lightblue">
+        <div class="navbar-wrapper">
+        <!-- put Logo is hear -->
+        <div class="navbar-brand header-logo">
+            <a href="index.html" class="b-brand">
+               <span class="b-title">HYR Portal</span>
+            </a>
+        </div>
+            <!-- end Logo is hear -->
+            <div class="navbar-content scroll-div">
+                <ul class="nav pcoded-inner-navbar">
+                    <li class="nav-item pcoded-menu-caption">
+                        <label>Navigation</label>
+                    </li>
+                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item">
+                        <a href="{% url 'settings' %}" class="nav-link ">
+                            <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                            <span class="pcoded-mtext">Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="sample-page.html" class="nav-link">
+                            <span class="pcoded-micon"><i class="feather icon-sidebar"></i></span>
+                            <span class="pcoded-mtext">Connect</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'logout' %}" class="nav-link">
+                            <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                            <span class="pcoded-mtext">Sign-out</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- [ navigation menu ] end -->
+
+    <!-- [ Main Content ] start -->
+    <div class="pcoded-main-container">
+        <div class="pcoded-wrapper">
+            <div class="pcoded-content">
+                <div class="pcoded-inner-content">
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <!-- [ Main Content ] start -->
+                            {% block content %}
+                            {% endblock %}
+                            <!-- [ Main Content ] end -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- [ Main Content ] end -->
+{% endblock %}

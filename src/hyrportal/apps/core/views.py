@@ -1,10 +1,11 @@
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.forms import ModelForm
 from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, FormView
+from django.views.generic import TemplateView, UpdateView
+
+from hyrportal.apps.core.models import User
 
 
 class LogoutView(View):
@@ -13,14 +14,21 @@ class LogoutView(View):
         return redirect('/')
 
 
-class SettingsForm(ModelForm):
-    class Meta:
-        model = User
-
-
-class SettingsView(LoginRequiredMixin, FormView):
+class SettingsView(LoginRequiredMixin, UpdateView):
     template_name = 'settings.html'
-    form_class = SettingsForm
+    model = User
+    fields = [
+        'full_name',
+        'company_name',
+        'address',
+        'company_vat',
+        'city',
+        'zip_code'
+    ]
+    success_url = reverse_lazy('settings')
+
+    def get_object(self, *args, **kwargs):
+        return self.request.user
 
 
 class UserCreateView(LoginRequiredMixin, TemplateView):

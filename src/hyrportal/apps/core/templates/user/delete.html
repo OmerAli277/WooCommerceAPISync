@@ -1,2 +1,12 @@
 {% extends 'auth.html' %}
 {% block title %}Delete user{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+
+        <p>Are you sure you want to delete user "{{ object.customer_name }}" with customer no. "{{ object.customer_no }}"?</p>
+
+        <button type="submit">Confirm deletion</button>
+    </form>
+{% endblock %}

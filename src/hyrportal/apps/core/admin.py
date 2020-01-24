@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import User
+from .models import User, Seller
 
 
 class MyUserAdmin(UserAdmin):
@@ -21,3 +21,9 @@ class MyUserAdmin(UserAdmin):
 
 
 admin.site.register(User, MyUserAdmin)
+
+
+@admin.register(Seller)
+class SellerAdmin(admin.ModelAdmin):
+    list_display = ('customer_no', 'customer_name', 'account_type', 'owner')
+    fields = ('customer_no', 'customer_name', 'account_type', 'owner')

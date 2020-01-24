@@ -25,6 +25,7 @@ urlpatterns = [
     path('accounts/logout/', views.LogoutView.as_view(), name='logout'),
     path('', RedirectView.as_view(pattern_name='settings', permanent=False)),
     path('settings/',  views.SettingsView.as_view(), name='settings'),
+    path('users/', views.UserListView.as_view(), name='user-list'),
     path('user/add/', views.UserCreateView.as_view(), name='user-create'),
     path('user/<int:pk>/edit/', views.UserEditView.as_view(), name='user-edit'),
     path('user/<int:pk>/delete/', views.UserDeleteView.as_view(), name='user-delete'),

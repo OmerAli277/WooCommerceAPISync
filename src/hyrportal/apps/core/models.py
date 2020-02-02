@@ -40,11 +40,11 @@ class WooCustomer(models.Model):
     date_created = models.DateTimeField(null=True, blank=True)
     date_modified = models.DateTimeField(null=True, blank=True)
     is_paying_customer = models.BooleanField(default=False)
-    orders_count = models.IntegerField(null=True, blank=True, default=0)
-    total_spent = models.FloatField(null=True, blank=True, default=0)
+    # orders_count = models.IntegerField(null=True, blank=True, default=0)
+    # total_spent = models.FloatField(null=True, blank=True, default=0)
     # meta_data = models.ManyToManyField(to='woocommerce.WooMetaData', blank=True)
     
-    customer_id = models.IntegerField(null=True, blank=True)
+    customer_id = models.IntegerField(null=True, blank=True,unique=True)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     company = models.CharField(max_length=255, null=True, blank=True)
@@ -58,131 +58,131 @@ class WooCustomer(models.Model):
     phone = models.CharField(max_length=255, null=True, blank=True)
     
     def __str__(self):
-        return f"{self.user.last_name}, {self.user.first_name}"
+        return f"{self.last_name}, {self.first_name}"
 
 
-class WooOrder(models.Model):
-    # customer = models.ForeignKey('woocommerce.WooCustomer', related_name='woo_customer_orders',
-    #                              on_delete=models.CASCADE)
-    order_id = models.IntegerField(null=True, blank=True)
-    parent_id = models.IntegerField(default=0)
-    number = models.CharField(max_length=255, null=True, blank=True)
-    order_key = models.CharField(max_length=255, null=True, blank=True)
-    created_via = models.CharField(max_length=255, null=True, blank=True)
-    version = models.CharField(max_length=255, null=True, blank=True)
-    status = models.CharField(max_length=255, null=True, blank=True)
-    currency = models.CharField(max_length=255, null=True, blank=True)
-    discount_total = models.FloatField(null=True, blank=True, default=0)
-    discount_tax = models.FloatField(null=True, blank=True, default=0)
-    shipping_total = models.FloatField(null=True, blank=True, default=0)
-    shipping_tax = models.FloatField(null=True, blank=True, default=0)
-    cart_tax = models.FloatField(null=True, blank=True, default=0)
-    total = models.FloatField(null=True, blank=True, default=0)
-    total_tax = models.FloatField(null=True, blank=True, default=0)
-    prices_include_tax = models.FloatField(null=True, blank=True, default=0)
-    payment_method = models.CharField(max_length=255, null=True, blank=True)
-    payment_method_title = models.CharField(max_length=255, null=True, blank=True)
-    transaction_id = models.CharField(max_length=255, null=True, blank=True)
-    
-    # billing = models.ForeignKey(to='woocommerce.WooBilling', blank=True, null=True, on_delete=models.SET_NULL)
-    # shipping = models.ForeignKey(to='woocommerce.WooShippment', blank=True, null=True, on_delete=models.SET_NULL)
-    
-    date_created = models.DateTimeField(null=True, blank=True)
-    date_modified = models.DateTimeField(null=True, blank=True)
-    date_paid = models.DateTimeField(null=True, blank=True)
-    date_completed = models.DateTimeField(null=True, blank=True)
-
-
-class WooOrderItem(models.Model):
-    # order = models.ForeignKey(to='woocommerce.WooOrder', related_name='woo_orderitems', on_delete=models.CASCADE)
-    # subscription = models.ForeignKey(to='woocommerce.WooSubscription', null=True, blank=True, on_delete=models.SET_NULL)
-    orderitem_id = models.IntegerField(null=True, blank=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    sku = models.CharField(max_length=255, null=True, blank=True)
-    tax_class = models.CharField(max_length=255, null=True, blank=True)
-    quantity = models.IntegerField(null=True, blank=True)
-    price = models.FloatField(null=True, blank=True, default=0)
-    subtotal = models.FloatField(null=True, blank=True, default=0)
-    subtotal_tax = models.FloatField(null=True, blank=True, default=0)
-    total = models.FloatField(null=True, blank=True, default=0)
-    total_tax = models.FloatField(null=True, blank=True, default=0)
-    
-    # product = models.ForeignKey(to='woocommerce.WooProduct', null=True, blank=True, on_delete=models.SET_NULL)
-    # variant = models.ForeignKey(to='woocommerce.WooVariant', null=True, blank=True, on_delete=models.SET_NULL)
-
-
-class WooProduct(models.Model):
-    product_id = models.IntegerField(null=True, blank=True)
-    parent_id = models.IntegerField(null=True, blank=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    slug = models.CharField(max_length=255, null=True, blank=True)
-    permalink = models.CharField(max_length=255, null=True, blank=True)
-    description = models.TextField(default=None, null=True, blank=True)
-    short_description = models.CharField(max_length=255, null=True, blank=True)
-    sku = models.CharField(max_length=255, null=True, blank=True)
-    type = models.CharField(max_length=255, null=True, blank=True)
-    price_html = models.TextField(default=None, null=True, blank=True)
-    status = models.CharField(max_length=255, null=True, blank=True)
-    catalog_visibility = models.CharField(max_length=255, null=True, blank=True)
-    stock_quantity = models.CharField(max_length=255, null=True, blank=True)
-    stock_status = models.CharField(max_length=255, null=True, blank=True)
-    tax_status = models.CharField(max_length=255, null=True, blank=True)
-    tax_class = models.CharField(max_length=255, null=True, blank=True)
-    shipping_class = models.CharField(max_length=255, null=True, blank=True)
-    shipping_class_id = models.IntegerField(null=True, blank=True)
-    backorders = models.CharField(max_length=255, null=True, blank=True)
-    
-    price = models.FloatField(null=True, blank=True, default=0)
-    regular_price = models.FloatField(null=True, blank=True, default=0)
-    sale_price = models.FloatField(null=True, blank=True, default=0)
-    total_sales = models.FloatField(null=True, blank=True, default=0)
-    
-    featured = models.BooleanField(default=False)
-    on_sale = models.BooleanField(default=False)
-    purchasable = models.BooleanField(default=False)
-    virtual = models.BooleanField(default=False)
-    downloadable = models.BooleanField(default=False)
-    manage_stock = models.BooleanField(default=False)
-    backorders_allowed = models.BooleanField(default=False)
-    backordered = models.BooleanField(default=False)
-    sold_individually = models.BooleanField(default=False)
-    shipping_required = models.BooleanField(default=False)
-    shipping_taxable = models.BooleanField(default=False)
-    # meta_data = models.ManyToManyField(to='woocommerce.WooMetaData', blank=True)
-    date_created = models.DateTimeField(null=True, blank=True)
-    
-    def __str__(self):
-        return self.name
-    
-    class Meta:
-        ordering = ('name',)
-
-
-class WooVariant(models.Model):
-    # products = models.ForeignKey(to='woocommerce.WooProduct', related_name='woo_variants', on_delete=models.CASCADE)
-    variant_id = models.IntegerField(null=True, blank=True)
-    description = models.TextField(default=None, null=True, blank=True)
-    sku = models.CharField(max_length=255, null=True, blank=True)
-    price = models.FloatField(null=True, blank=True, default=0)
-    regular_price = models.FloatField(null=True, blank=True, default=0)
-    sale_price = models.FloatField(null=True, blank=True, default=0)
-    status = models.CharField(max_length=255, null=True, blank=True)
-    tax_status = models.CharField(max_length=255, null=True, blank=True)
-    tax_class = models.CharField(max_length=255, null=True, blank=True)
-    stock_quantity = models.CharField(max_length=255, null=True, blank=True)
-    stock_status = models.CharField(max_length=255, null=True, blank=True)
-    backorders = models.CharField(max_length=255, null=True, blank=True)
-    shipping_class = models.CharField(max_length=255, null=True, blank=True)
-    on_sale = models.BooleanField(default=False)
-    purchasable = models.BooleanField(default=False)
-    virtual = models.BooleanField(default=False)
-    downloadable = models.BooleanField(default=False)
-    manage_stock = models.BooleanField(default=False)
-    backorders_allowed = models.BooleanField(default=False)
-    backordered = models.BooleanField(default=False)
-    shipping_class_id = models.IntegerField(null=True, blank=True)
-    # meta_data = models.ManyToManyField(to='woocommerce.WooMetaData', blank=True)
-    date_created = models.DateTimeField(null=True, blank=True)
+# class WooOrder(models.Model):
+#     # customer = models.ForeignKey('woocommerce.WooCustomer', related_name='woo_customer_orders',
+#     #                              on_delete=models.CASCADE)
+#     order_id = models.IntegerField(null=True, blank=True)
+#     parent_id = models.IntegerField(default=0)
+#     number = models.CharField(max_length=255, null=True, blank=True)
+#     order_key = models.CharField(max_length=255, null=True, blank=True)
+#     created_via = models.CharField(max_length=255, null=True, blank=True)
+#     version = models.CharField(max_length=255, null=True, blank=True)
+#     status = models.CharField(max_length=255, null=True, blank=True)
+#     currency = models.CharField(max_length=255, null=True, blank=True)
+#     discount_total = models.FloatField(null=True, blank=True, default=0)
+#     discount_tax = models.FloatField(null=True, blank=True, default=0)
+#     shipping_total = models.FloatField(null=True, blank=True, default=0)
+#     shipping_tax = models.FloatField(null=True, blank=True, default=0)
+#     cart_tax = models.FloatField(null=True, blank=True, default=0)
+#     total = models.FloatField(null=True, blank=True, default=0)
+#     total_tax = models.FloatField(null=True, blank=True, default=0)
+#     prices_include_tax = models.FloatField(null=True, blank=True, default=0)
+#     payment_method = models.CharField(max_length=255, null=True, blank=True)
+#     payment_method_title = models.CharField(max_length=255, null=True, blank=True)
+#     transaction_id = models.CharField(max_length=255, null=True, blank=True)
+#
+#     # billing = models.ForeignKey(to='woocommerce.WooBilling', blank=True, null=True, on_delete=models.SET_NULL)
+#     # shipping = models.ForeignKey(to='woocommerce.WooShippment', blank=True, null=True, on_delete=models.SET_NULL)
+#
+#     date_created = models.DateTimeField(null=True, blank=True)
+#     date_modified = models.DateTimeField(null=True, blank=True)
+#     date_paid = models.DateTimeField(null=True, blank=True)
+#     date_completed = models.DateTimeField(null=True, blank=True)
+#
+#
+# class WooOrderItem(models.Model):
+#     # order = models.ForeignKey(to='woocommerce.WooOrder', related_name='woo_orderitems', on_delete=models.CASCADE)
+#     # subscription = models.ForeignKey(to='woocommerce.WooSubscription', null=True, blank=True, on_delete=models.SET_NULL)
+#     orderitem_id = models.IntegerField(null=True, blank=True)
+#     name = models.CharField(max_length=255, null=True, blank=True)
+#     sku = models.CharField(max_length=255, null=True, blank=True)
+#     tax_class = models.CharField(max_length=255, null=True, blank=True)
+#     quantity = models.IntegerField(null=True, blank=True)
+#     price = models.FloatField(null=True, blank=True, default=0)
+#     subtotal = models.FloatField(null=True, blank=True, default=0)
+#     subtotal_tax = models.FloatField(null=True, blank=True, default=0)
+#     total = models.FloatField(null=True, blank=True, default=0)
+#     total_tax = models.FloatField(null=True, blank=True, default=0)
+#
+#     # product = models.ForeignKey(to='woocommerce.WooProduct', null=True, blank=True, on_delete=models.SET_NULL)
+#     # variant = models.ForeignKey(to='woocommerce.WooVariant', null=True, blank=True, on_delete=models.SET_NULL)
+#
+#
+# class WooProduct(models.Model):
+#     product_id = models.IntegerField(null=True, blank=True)
+#     parent_id = models.IntegerField(null=True, blank=True)
+#     name = models.CharField(max_length=255, null=True, blank=True)
+#     slug = models.CharField(max_length=255, null=True, blank=True)
+#     permalink = models.CharField(max_length=255, null=True, blank=True)
+#     description = models.TextField(default=None, null=True, blank=True)
+#     short_description = models.CharField(max_length=255, null=True, blank=True)
+#     sku = models.CharField(max_length=255, null=True, blank=True)
+#     type = models.CharField(max_length=255, null=True, blank=True)
+#     price_html = models.TextField(default=None, null=True, blank=True)
+#     status = models.CharField(max_length=255, null=True, blank=True)
+#     catalog_visibility = models.CharField(max_length=255, null=True, blank=True)
+#     stock_quantity = models.CharField(max_length=255, null=True, blank=True)
+#     stock_status = models.CharField(max_length=255, null=True, blank=True)
+#     tax_status = models.CharField(max_length=255, null=True, blank=True)
+#     tax_class = models.CharField(max_length=255, null=True, blank=True)
+#     shipping_class = models.CharField(max_length=255, null=True, blank=True)
+#     shipping_class_id = models.IntegerField(null=True, blank=True)
+#     backorders = models.CharField(max_length=255, null=True, blank=True)
+#
+#     price = models.FloatField(null=True, blank=True, default=0)
+#     regular_price = models.FloatField(null=True, blank=True, default=0)
+#     sale_price = models.FloatField(null=True, blank=True, default=0)
+#     total_sales = models.FloatField(null=True, blank=True, default=0)
+#
+#     featured = models.BooleanField(default=False)
+#     on_sale = models.BooleanField(default=False)
+#     purchasable = models.BooleanField(default=False)
+#     virtual = models.BooleanField(default=False)
+#     downloadable = models.BooleanField(default=False)
+#     manage_stock = models.BooleanField(default=False)
+#     backorders_allowed = models.BooleanField(default=False)
+#     backordered = models.BooleanField(default=False)
+#     sold_individually = models.BooleanField(default=False)
+#     shipping_required = models.BooleanField(default=False)
+#     shipping_taxable = models.BooleanField(default=False)
+#     # meta_data = models.ManyToManyField(to='woocommerce.WooMetaData', blank=True)
+#     date_created = models.DateTimeField(null=True, blank=True)
+#
+#     def __str__(self):
+#         return self.name
+#
+#     class Meta:
+#         ordering = ('name',)
+#
+#
+# class WooVariant(models.Model):
+#     # products = models.ForeignKey(to='woocommerce.WooProduct', related_name='woo_variants', on_delete=models.CASCADE)
+#     variant_id = models.IntegerField(null=True, blank=True)
+#     description = models.TextField(default=None, null=True, blank=True)
+#     sku = models.CharField(max_length=255, null=True, blank=True)
+#     price = models.FloatField(null=True, blank=True, default=0)
+#     regular_price = models.FloatField(null=True, blank=True, default=0)
+#     sale_price = models.FloatField(null=True, blank=True, default=0)
+#     status = models.CharField(max_length=255, null=True, blank=True)
+#     tax_status = models.CharField(max_length=255, null=True, blank=True)
+#     tax_class = models.CharField(max_length=255, null=True, blank=True)
+#     stock_quantity = models.CharField(max_length=255, null=True, blank=True)
+#     stock_status = models.CharField(max_length=255, null=True, blank=True)
+#     backorders = models.CharField(max_length=255, null=True, blank=True)
+#     shipping_class = models.CharField(max_length=255, null=True, blank=True)
+#     on_sale = models.BooleanField(default=False)
+#     purchasable = models.BooleanField(default=False)
+#     virtual = models.BooleanField(default=False)
+#     downloadable = models.BooleanField(default=False)
+#     manage_stock = models.BooleanField(default=False)
+#     backorders_allowed = models.BooleanField(default=False)
+#     backordered = models.BooleanField(default=False)
+#     shipping_class_id = models.IntegerField(null=True, blank=True)
+#     # meta_data = models.ManyToManyField(to='woocommerce.WooMetaData', blank=True)
+#     date_created = models.DateTimeField(null=True, blank=True)
 
 # User settings
 # class WooCommerceSettings(models.Model):

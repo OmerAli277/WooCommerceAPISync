@@ -82,7 +82,14 @@ WSGI_APPLICATION = 'hyrportal.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    'default': env.db('DATABASE_URL')
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'hyrportalwoo',
+        'USER': 'developer',
+        'PASSWORD': 'dummypass',
+        'HOST': 'localhost',
+        'PORT': '',
+    }
 }
 
 

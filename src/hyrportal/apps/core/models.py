@@ -10,9 +10,6 @@ class User(AbstractUser):
     company_vat = models.CharField(max_length=128, null=True, blank=True)
     city = models.CharField(max_length=128, null=True, blank=True)
     zip_code = models.CharField(max_length=128, null=True, blank=True)
-
-
-class Seller(models.Model):
     FORTNOX = 'fortnox'
     VISMA = 'visma'
 
@@ -20,10 +17,12 @@ class Seller(models.Model):
         (FORTNOX, 'Fortnox'),
         (VISMA, 'Visma'),
     ]
-    customer_no = models.CharField(max_length=128)
-    customer_name = models.CharField(max_length=128)
-    account_type = models.CharField(max_length=128, choices=ACCOUNT_TYPES)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sellers')
+    customer_no = models.CharField(max_length=128, null=True, blank=True)
+    customer_name = models.CharField(max_length=128, null=True, blank=True)
+    account_type = models.CharField(max_length=128, choices=ACCOUNT_TYPES, default=FORTNOX)
+    is_super_admin = models.BooleanField(default=False)
+    is_seller = models.BooleanField(default=True)
+
 
 
 class WooMetaData(models.Model):
@@ -63,7 +62,7 @@ class WooOrder(models.Model):
     customer = models.ForeignKey('WooCustomer', on_delete=models.CASCADE)
     order_id = models.IntegerField(null=True, blank=True)
     parent_id = models.IntegerField(default=0)
-    number = models.IntegerField(null=True, blank=True)
+    number = models.CharField(max_length=255, null=True, blank=True)
     order_key = models.CharField(max_length=255, null=True, blank=True)
     created_via = models.CharField(max_length=255, null=True, blank=True)
     version = models.CharField(max_length=255, null=True, blank=True)
@@ -197,7 +196,7 @@ class WooCommerceSettings(models.Model):
     consumer_key = models.CharField(max_length=255, blank=True, null=True)
     consumer_secret = models.CharField(max_length=255, blank=True, null=True)
     # version = models.CharField(choices=WooCommerceVersion.choices(), max_length=255, blank=True, null=True)
-
+    seller = models.ForeignKey(User, on_delete=models.CASCADE,  null=True, blank=True)
     #user may choose if they want their woo orders posted as invoices OR orders in Forntox/Visma
     is_sync_articles = models.BooleanField(default=False)
     is_post_orders = models.BooleanField(default=False)

@@ -1,0 +1,31 @@
+{% extends 'auth.html' %}
+{% block title %}User management{% endblock %}
+{% block content %}
+    <p>Users</p>
+
+    <a href="{% url 'user-create' %}">Add user</a>
+
+    <table>
+        <thead>
+            <tr>
+                <td>Customer #</td>
+                <td>Customer</td>
+                <td>Accounting Type</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+        {% for seller in sellers %}
+            <tr>
+                <td>{{ seller.customer_no }}</td>
+                <td>{{ seller.customer_name }}</td>
+                <td>{{ seller.account_type|title }}</td>
+                <td>
+                    <a href="{% url 'user-edit' seller.id %}">Edit</a>
+                    <a href="{% url 'user-delete' seller.id %}">Delete</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'auth.html' %}
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- [ sample-page ] start -->
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Settings</h5>
+            </div>
+            <div class="card-block">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <button type="submit">Save</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <!-- [ sample-page ] end -->
+</div>
+{% endblock %}

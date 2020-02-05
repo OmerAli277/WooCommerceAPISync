@@ -1,0 +1,5 @@
+progress on 4/02/2020
+-> configured PostgreSQL with django APP
+-> added schema for django app DB
+-> R&D on woocommerce API
+

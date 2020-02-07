@@ -1,4 +1,5 @@
 from django.contrib.auth import logout, hashers, login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import WooCustomer, WooOrder, WooProduct, User
 from woocommerce import API
 import json
@@ -7,7 +8,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import ModelForm
-from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
 # from rest_framework import generics, permissions
@@ -16,9 +17,9 @@ from django.views.generic import TemplateView, UpdateView, CreateView, DeleteVie
 # from rest_framework.response import Response
 # from rest_framework.authtoken.models import Token
 wcapi = API(
-    url="https://sorbUserybacken.hyrsverige.se/",
-    consumer_key="ck_eac3de02bb431d0895d1ce8bb0dc1c127adcb198",
-    consumer_secret="cs_aef7c07a471db1dc10bdc11a7bd7d2e9237e6f7c",
+    url="https://automatiseramera.se/",
+    consumer_key="ck_092c10db6a942dffe7ce610667e8c42226be7889",
+    consumer_secret="cs_0678d389f81fa5060d896e8e5fb50022626bf96b",
     version="wc/v3",
     timeout=30
 )
@@ -68,10 +69,10 @@ print(r)
 
 
 
-class LogoutView(View):
-    def get(self, request):
-        logout(request)
-        return redirect('/')
+# class LogoutView(View):
+#     def get(self, request):
+#         logout(request)
+#         return redirect('/')
 
 
 class SettingsView(UpdateView):
@@ -213,4 +214,24 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy('user-list')
 
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
 
+            return redirect('user/create.html')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {form: form})
+
+def login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+            return redirect('user/create.html')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {form: form})

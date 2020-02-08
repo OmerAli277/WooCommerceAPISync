@@ -16,15 +16,15 @@ from django.views.generic import TemplateView, UpdateView, CreateView, DeleteVie
 # from .serializers import UserSerialzer, CustomerSerialzer, ProductSerialzer, OrderSerialzer
 # from rest_framework.response import Response
 # from rest_framework.authtoken.models import Token
-wcapi = API(
-    url="https://automatiseramera.se/",
-    consumer_key="ck_092c10db6a942dffe7ce610667e8c42226be7889",
-    consumer_secret="cs_0678d389f81fa5060d896e8e5fb50022626bf96b",
-    version="wc/v3",
-    timeout=30
-)
-r = wcapi.get("products")
-print(r)
+# wcapi = API(
+#     url="https://automatiseramera.se/",
+#     consumer_key="ck_092c10db6a942dffe7ce610667e8c42226be7889",
+#     consumer_secret="cs_0678d389f81fa5060d896e8e5fb50022626bf96b",
+#     version="wc/v3",
+#     timeout=30
+# )
+# r = wcapi.get("products")
+# print(r)
 
 # class UsersViewSet(generics.ListCreateAPIView):
 

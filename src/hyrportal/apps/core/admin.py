@@ -15,7 +15,7 @@ admin.site.register(User)
 #         ),
 #         (_('Permissions'), {
 #             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
-#         }),
+#         }),s
 #         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
 #     )
 #     list_display = ('username', 'company_name', 'address', 'is_staff')

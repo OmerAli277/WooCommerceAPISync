@@ -16,6 +16,7 @@ from django.views.generic import TemplateView, UpdateView, CreateView, DeleteVie
 # from .serializers import UserSerialzer, CustomerSerialzer, ProductSerialzer, OrderSerialzer
 # from rest_framework.response import Response
 # from rest_framework.authtoken.models import Token
+
 wcapi = API(
     url="https://automatiseramera.se/",
     consumer_key="ck_092c10db6a942dffe7ce610667e8c42226be7889",
@@ -197,9 +198,9 @@ class UserCreateView(LoginRequiredMixin, CreateView):
     ]
     success_url = reverse_lazy('user-list')
 
-    def form_valid(self, form):
-        form.instance.owner = self.request.user
-        return super().form_valid(form)
+    # def form_valid(self, form):
+    #     form.instance.owner = self.request.user
+    #     return super().form_valid(form)
 
 
 class UserEditView(LoginRequiredMixin, UpdateView):

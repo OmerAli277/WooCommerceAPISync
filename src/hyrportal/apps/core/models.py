@@ -28,9 +28,9 @@ class User(AbstractUser):
 class WooMetaData(models.Model):
     key = models.CharField(max_length=256, db_index=True)
     value = models.TextField(default=None, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.key} : {self.value}"
+    #
+    # def __str__(self):
+    #     return f"{self.key} : {self.value}"
 
 
 class WooCustomer(models.Model):
@@ -54,8 +54,8 @@ class WooCustomer(models.Model):
     email = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.last_name}, {self.first_name}"
+    # def __str__(self):
+    #     return f"{self.last_name}, {self.first_name}"
 
 
 class WooOrder(models.Model):
@@ -231,8 +231,8 @@ class WooCommerceSettings(models.Model):
         verbose_name = _('WooCommerce - Settings')
         verbose_name_plural = _('WooCommerce - Settings')
 
-    def __str__(self):
-        return f"[{self.subscription_settings}] - {self.id}"
+    # def __str__(self):
+    #     return f"[{self.subscription_settings}] - {self.id}"
 
 
 

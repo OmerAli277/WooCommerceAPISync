@@ -20,12 +20,24 @@
     <!-- fontawesome icon -->
     <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome/css/fontawesome-all.min.css' %}">
     <!-- animation css -->
-    <link rel="stylesheet" href="{% static 'assets/plugins/animation/css/animate.min.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'assets/plugins/animation/css/animate.min.css' %}"> -->
+
+    <!---Bootstrap-->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap/bootstrap.min.css' %}">
+
     <!-- vendor css -->
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 
+
 </head>
 <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="text-center">HYR PORTAL</h1>
+            </div>
+        </div>
+    </div>
     {% block body %}
     {% endblock %}
 
@@ -77,9 +89,14 @@
     <!-- Warning Section Ends -->
 
     <!-- Required Js -->
-    <script src="{% static 'assets/js/vendor-all.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+
+
+    <!-- <script src="{% static 'assets/js/vendor-all.min.js' %}"></script>
     <script src="{% static 'assets/plugins/bootstrap/js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.js' %}"></script> -->
 
 </body>
 </html>

@@ -1,4 +1,5 @@
-from django.contrib.auth import logout, hashers, login
+from django.contrib.auth import logout, hashers, login 
+from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import WooCustomer, WooOrder, WooProduct, User
 from woocommerce import API
@@ -11,6 +12,8 @@ from django.forms import ModelForm
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+from django.contrib.auth.models import User, auth
+# from django.contrib.auth import get_user_model
 # from rest_framework import generics, permissions
 # from rest_framework.views import APIView
 # from .serializers import UserSerialzer, CustomerSerialzer, ProductSerialzer, OrderSerialzer
@@ -76,9 +79,64 @@ print(r)
 
 
 
+def login(request):
+    if request.method == 'POST':
+        email = request.GET.get('InputEmail1')
+        password = request.GET.get('InputPassword')
+
+        user = auth.authenticate(username = email, password= password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('/')
+        else:
+            return render(request, 'registration/login.html')
+    else:
+        return render(request, 'registration/login.html')
 
 
+# def login(request):
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
 
+#             return redirect('user/create.html')
+#     else:
+#         form = AuthenticationForm()
+#     return render(request, 'registration/login.html', {form: form})
+
+
+def signup(request):
+    if request.method == 'POST':
+        companyName = request.GET.get('Company_Name')
+        comapanyVat = request.GET.get('Company_Vat')
+        customerName = request.GET.get('Custo mer_Name')
+        customerNum = request.GET.get('Customer_Number')
+        accountType = request.GET.get('Company_Vat')
+        email = request.GET.get('inputEmail')
+        password1 = request.GET.get('password1')
+        password2 = request.GET.get('password2')
+        Address = request.GET.get('inputAddress')
+        city = request.GET.get('inputCity')
+        zipCode = request.GET.get('inputZip')
+        BoxChecked = request.GET.get('gridCheck')
+
+        user = User.objects.create_user(username = customerName, password=password1 ,company_name = companyName , email = email, customer_no = customerNum)
+        user.save()
+        print('user Created')
+        return render(request, 'registration/login.html')
+        # if password2 == password1:
+        #     return render(request, 'registration/login.html')
+
+        # else:
+        #     print ('Password not match!')
+    else:
+        return render(request, 'registration/signup.html')
+
+
+def get(self, request):
+    logout(request)
+    return redirect('/')
 
 # class LogoutView(View):
 #     def get(self, request):
@@ -225,24 +283,13 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy('user-list')
 
-def signup(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
+# def login(request):
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
 
-            return redirect('user/create.html')
-    else:
-        form = UserCreationForm()
-    return render(request, 'registration/signup.html', {form: form})
-
-def login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request.POST)
-        if form.is_valid():
-            form.save()
-
-            return redirect('user/create.html')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'registration/login.html', {form: form})
+#             return redirect('user/create.html')
+#     else:
+#         form = AuthenticationForm()
+#     return render(request, 'registration/login.html', {form: form})

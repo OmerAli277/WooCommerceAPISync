@@ -25,7 +25,7 @@ from .woo_task import woocommerce_api
 #     timeout=30
 # )
 wp = woocommerce_api("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
-wp.woo_test()
+wp.sync_customers()
 
 # class UsersViewSet(generics.ListCreateAPIView):
 

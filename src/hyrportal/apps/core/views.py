@@ -12,8 +12,10 @@ from django.forms import ModelForm
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+<<<<<<< HEAD
 from django.contrib.auth.models import User, auth
 # from django.contrib.auth import get_user_model
+from .woo_task import woocommerce_api
 # from rest_framework import generics, permissions
 # from rest_framework.views import APIView
 # from .serializers import UserSerialzer, CustomerSerialzer, ProductSerialzer, OrderSerialzer
@@ -37,8 +39,8 @@ print(r)
 #     version="wc/v3",
 #     timeout=30
 # )
-# r = wcapi.get("products")
-# print(r)
+wp = woocommerce_api("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
+wp.sync_customers()
 
 # class UsersViewSet(generics.ListCreateAPIView):
 

@@ -78,20 +78,20 @@ wp.sync_customers()
 #         return Response({"success": True, "Message": "successful", "token": token.key if token else None})
 
 
-
-def login(request):
-    if request.method == 'POST':
-        email = request.GET.get('InputEmail1')
-        password = request.GET.get('InputPassword')
-
-        user = auth.authenticate(username = email, password= password)
-        if user is not None:
-            auth.login(request, user)
-            return redirect('/')
-        else:
-            return render(request, 'registration/login.html')
-    else:
-        return render(request, 'registration/login.html')
+#
+# def login(request):
+#     if request.method == 'POST':
+#         email = request.GET.get('InputEmail1')
+#         password = request.GET.get('InputPassword')
+#
+#         user = auth.authenticate(username = email, password= password)
+#         if user is not None:
+#             auth.login(request, user)
+#             return redirect('/')
+#         else:
+#             return render(request, 'registration/login.html')
+#     else:
+#         return render(request, 'registration/login.html')
 
 
 # def login(request):
@@ -145,7 +145,6 @@ def signup(request):
 
 
 class SettingsView(UpdateView):
-
     template_name = 'settings.html'
     model = User
     fields = '__all__'
@@ -283,13 +282,13 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy('user-list')
 
-# def login(request):
-#     if request.method == 'POST':
-#         form = AuthenticationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
+def login(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request.POST)
+        if form.is_valid():
+            form.save()
 
-#             return redirect('user/create.html')
-#     else:
-#         form = AuthenticationForm()
-#     return render(request, 'registration/login.html', {form: form})
+            return redirect('user/create.html')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'registration/login.html', {form: form})

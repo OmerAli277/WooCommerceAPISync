@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser , UserManager
 from django.db import models
 
+
 class User(AbstractUser):
 
     company_name = models.CharField(max_length=128, null=True, blank=True)

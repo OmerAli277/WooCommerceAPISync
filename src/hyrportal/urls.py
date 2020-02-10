@@ -29,6 +29,7 @@ urlpatterns = [
 
 	path('accounts/', include('django.contrib.auth.urls')),
 	path('signup/', views.signup, name='signup'),
+	path('signup/creating', views.creating, name='creating'),
 	# path('login/', views.login, name='login'),
 	path('', RedirectView.as_view(pattern_name='settings', permanent=False)),
 	path('settings/', views.SettingsView.as_view(), name='settings'),

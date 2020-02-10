@@ -105,33 +105,53 @@ wp.sync_customers()
 #         form = AuthenticationForm()
 #     return render(request, 'registration/login.html', {form: form})
 
-
-def signup(request):
+def creating(request):
     if request.method == 'POST':
         companyName = request.POST.get('Company_Name')
-        comapanyVat = request.POST.get('Company_Vat')
-        customerName = request.POST.get('Customer_Name')
-        customerNum = request.POST.get('Customer_Number')
-        accountType = request.POST.get('Company_Vat')
-        email = request.POST.get('inputEmail')
-        password1 = request.POST.get('password1')
-        password2 = request.POST.get('password2')
-        Address = request.POST.get('inputAddress')
-        city = request.POST.get('inputCity')
-        zipCode = request.POST.get('inputZip')
-        BoxChecked = request.POST.get('gridCheck')
+        # comapanyVat = signUp_Data.get('Company_Vat')
+        # customerName = signUp_Data.get('Customer_Name')
+        # customerNum = signUp_Data.get('Customer_Number')
+        # accountType = signUp_Data.get('Company_Vat')
+        # email = signUp_Data.get('inputEmail')
+        # password1 = signUp_Data.get('password1')
+        # password2 = signUp_Data.get('password2')
+        # Address = signUp_Data.get('inputAddress')
+        # city = signUp_Data.get('inputCity')
+        # zipCode = signUp_Data.get('inputZip')
+        # BoxChecked = signUp_Data.get('gridCheck')
 
-        user = User.objects.create_user(customerName, email ,password1)
+        user = User.objects.create_user(  username='testing', email='testing@gmail.com' ,password = '123')
         user.save()
         print('user Created')
         return render(request, 'registration/login.html')
+
+def signup(request):
+    return render(request, 'registration/signup.html')
+    # if request.method == 'POST':
+    #     companyName = request.POST['Company_Name']
+        # comapanyVat = signUp_Data.get('Company_Vat')
+        # customerName = signUp_Data.get('Customer_Name')
+        # customerNum = signUp_Data.get('Customer_Number')
+        # accountType = signUp_Data.get('Company_Vat')
+        # email = signUp_Data.get('inputEmail')
+        # password1 = signUp_Data.get('password1')
+        # password2 = signUp_Data.get('password2')
+        # Address = signUp_Data.get('inputAddress')
+        # city = signUp_Data.get('inputCity')
+        # zipCode = signUp_Data.get('inputZip')
+        # BoxChecked = signUp_Data.get('gridCheck')
+
+        # user = User.objects.create_user(  username='testing', email='testing@gmail.com' ,password = '123')
+        # user.save()
+        # print('user Created')
+        # return render(request, 'registration/login.html')
         # if password2 == password1:
         #     return render(request, 'registration/login.html')
 
         # else:
         #     print ('Password not match!')
-    else:
-        return render(request, 'registration/signup.html')
+    # else:
+    #     return render(request, 'registration/signup.html')
 
 
 # def get(self, request):

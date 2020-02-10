@@ -1,7 +1,7 @@
 from django.contrib.auth import logout, hashers, login 
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import WooCustomer, WooOrder, WooProduct
+from .models import WooCustomer, WooOrder, WooProduct, User
 import json
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -11,7 +11,7 @@ from django.forms import ModelForm
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
-from django.contrib.auth.models import User, auth
+from django.contrib.auth.models import auth
 # from django.contrib.auth import get_user_model
 from .woo_task import woocommerce_api
 # from rest_framework import generics, permissions
@@ -121,7 +121,7 @@ def signup(request):
         zipCode = request.POST.get('inputZip')
         BoxChecked = request.POST.get('gridCheck')
 
-        user = User.objects.create_user(customerName, email ,password1 )
+        user = User.objects.create_user(customerName, email ,password1)
         user.save()
         print('user Created')
         return render(request, 'registration/login.html')

@@ -18,7 +18,7 @@ class User(AbstractUser):
         (FORTNOX, 'Fortnox'),
         (VISMA, 'Visma'),
     ]
-    customer_no = models.CharField(max_length=128, null=True, blank=True)
+    customer_no = models.CharField(max_length=128, null=True, blank=True, unique=True)
     customer_name = models.CharField(max_length=128, null=True, blank=True)
     account_type = models.CharField(max_length=128, choices=ACCOUNT_TYPES, default=FORTNOX)
     is_super_admin = models.BooleanField(default=False)

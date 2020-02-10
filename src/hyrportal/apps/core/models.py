@@ -1,6 +1,6 @@
 from datetime import datetime
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser , UserManager
 from django.db import models
 
 class User(AbstractUser):
@@ -17,7 +17,7 @@ class User(AbstractUser):
         (FORTNOX, 'Fortnox'),
         (VISMA, 'Visma'),
     ]
-    customer_no = models.CharField(max_length=128, null=True, blank=True)
+    customer_no = models.CharField(max_length=128, null=True, blank=True, unique=True)
     customer_name = models.CharField(max_length=128, null=True, blank=True)
     account_type = models.CharField(max_length=128, choices=ACCOUNT_TYPES, default=FORTNOX)
     is_super_admin = models.BooleanField(default=False)
@@ -28,9 +28,9 @@ class User(AbstractUser):
 class WooMetaData(models.Model):
     key = models.CharField(max_length=256, db_index=True)
     value = models.TextField(default=None, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.key} : {self.value}"
+    #
+    # def __str__(self):
+    #     return f"{self.key} : {self.value}"
 
 
 class WooCustomer(models.Model):
@@ -54,8 +54,8 @@ class WooCustomer(models.Model):
     email = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
 
-    def __str__(self):
-        return f"{self.last_name}, {self.first_name}"
+    # def __str__(self):
+    #     return f"{self.last_name}, {self.first_name}"
 
 
 class WooOrder(models.Model):
@@ -231,8 +231,8 @@ class WooCommerceSettings(models.Model):
         verbose_name = _('WooCommerce - Settings')
         verbose_name_plural = _('WooCommerce - Settings')
 
-    def __str__(self):
-        return f"[{self.subscription_settings}] - {self.id}"
+    # def __str__(self):
+    #     return f"[{self.subscription_settings}] - {self.id}"
 
 class fortnoxApiDetails(models.Model):
     seller_id = models.ForeignKey(User, on_delete=models.CASCADE,  null=True, blank=True)

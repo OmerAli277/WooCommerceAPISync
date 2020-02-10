@@ -108,6 +108,8 @@ def login(request):
 
 def signup(request):
     if request.method == 'POST':
+        print("I am here")
+        print(request.POST)
         companyName = request.POST.get('Company_Name')
         comapanyVat = request.POST.get('Company_Vat')
         customerName = request.POST.get('Customer_Name')
@@ -120,6 +122,7 @@ def signup(request):
         city = request.POST.get('inputCity')
         zipCode = request.POST.get('inputZip')
         BoxChecked = request.POST.get('gridCheck')
+        print("kjbfkjbkjvsbhv--------", companyName)
 
         user = User.objects.create_user(customerName, email ,password1)
         user.save()

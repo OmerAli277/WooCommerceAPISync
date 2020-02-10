@@ -89,9 +89,9 @@ WSGI_APPLICATION = 'hyrportal.wsgi.application'
 DATABASES = {
      'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        
+        'NAME': 'hyrportalwoo',
+        'USER': 'developer',
+        'PASSWORD': 'dummypass',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -135,8 +135,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
-AUTH_USER_MODEL = 'core.User'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/

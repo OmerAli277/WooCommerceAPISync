@@ -79,19 +79,19 @@ wp.sync_customers()
 
 
 #
-# def login(request):
-#     if request.method == 'POST':
-#         email = request.GET.get('InputEmail1')
-#         password = request.GET.get('InputPassword')
-#
-#         user = auth.authenticate(username = email, password= password)
-#         if user is not None:
-#             auth.login(request, user)
-#             return redirect('/')
-#         else:
-#             return render(request, 'registration/login.html')
-#     else:
-#         return render(request, 'registration/login.html')
+def login(request):
+    if request.method == 'POST':
+        email = request.GET.get('InputEmail1')
+        password = request.GET.get('InputPassword')
+
+        user = auth.authenticate(username = email, password= password)
+        if user is not None:
+            auth.login(request, user)
+            return redirect('/')
+        else:
+            return render(request, 'registration/login.html')
+    else:
+        return render(request, 'registration/login.html')
 
 
 # def login(request):
@@ -126,32 +126,34 @@ def creating(request):
         return render(request, 'registration/login.html')
 
 def signup(request):
-    return render(request, 'registration/signup.html')
-    # if request.method == 'POST':
-    #     companyName = request.POST['Company_Name']
-        # comapanyVat = signUp_Data.get('Company_Vat')
-        # customerName = signUp_Data.get('Customer_Name')
-        # customerNum = signUp_Data.get('Customer_Number')
-        # accountType = signUp_Data.get('Company_Vat')
-        # email = signUp_Data.get('inputEmail')
-        # password1 = signUp_Data.get('password1')
-        # password2 = signUp_Data.get('password2')
-        # Address = signUp_Data.get('inputAddress')
-        # city = signUp_Data.get('inputCity')
-        # zipCode = signUp_Data.get('inputZip')
-        # BoxChecked = signUp_Data.get('gridCheck')
+    if request.method == 'POST':
+        print("I am here")
+        print(request.POST)
+        companyName = request.POST.get('Company_Name')
+        comapanyVat = request.POST.get('Company_Vat')
+        customerName = request.POST.get('Customer_Name')
+        customerNum = request.POST.get('Customer_Number')
+        accountType = request.POST.get('Company_Vat')
+        email = request.POST.get('inputEmail')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        Address = request.POST.get('inputAddress')
+        city = request.POST.get('inputCity')
+        zipCode = request.POST.get('inputZip')
+        BoxChecked = request.POST.get('gridCheck')
+        print("kjbfkjbkjvsbhv--------", companyName)
 
-        # user = User.objects.create_user(  username='testing', email='testing@gmail.com' ,password = '123')
-        # user.save()
-        # print('user Created')
-        # return render(request, 'registration/login.html')
+        user = User.objects.create_user(customerName, email ,password1)
+        user.save()
+        print('user Created')
+        return render(request, 'registration/login.html')
         # if password2 == password1:
         #     return render(request, 'registration/login.html')
 
         # else:
         #     print ('Password not match!')
-    # else:
-    #     return render(request, 'registration/signup.html')
+    else:
+        return render(request, 'registration/signup.html')
 
 
 # def get(self, request):

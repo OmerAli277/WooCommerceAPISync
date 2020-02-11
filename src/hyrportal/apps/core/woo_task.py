@@ -1,8 +1,14 @@
 import json
 import requests
 from woocommerce import API
+<<<<<<< HEAD
 from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, fortnoxApiDetails
 from .fn_client import fn_article_api, fn_customer_api, fn_invoice_api, fn_invoice_payment_api
+=======
+# from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, fortnoxApiDetails
+from .fn_article import fn_article_api
+from .fn_customer import fn_customer_api
+>>>>>>> 2bbc3dc5b6fc3af92ee73e7e4ebc97b2b5511fb0
 
 class woo_fn_sync:
 

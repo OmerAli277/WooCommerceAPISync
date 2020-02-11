@@ -13,7 +13,7 @@ from django.views import View
 from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
 from django.contrib.auth.models import auth
 # from django.contrib.auth import get_user_model
-from .woo_task import woocommerce_api
+# from .woo_task import woocommerce_api
 # from rest_framework import generics, permissions
 # from rest_framework.views import APIView
 # from .serializers import UserSerialzer, CustomerSerialzer, ProductSerialzer, OrderSerialzer
@@ -37,8 +37,10 @@ from .woo_task import woocommerce_api
 #     version="wc/v3",
 #     timeout=30
 # )
-wp = woo_fn_sync("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
-wp.sync_customers()
+
+
+# wp = woo_fn_sync("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
+# wp.sync_customers()
 
 # class UsersViewSet(generics.ListCreateAPIView):
 
@@ -78,20 +80,42 @@ wp.sync_customers()
 #         return Response({"success": True, "Message": "successful", "token": token.key if token else None})
 
 
+#
 
-def login(request):
+def request(request):
+    print('I am in Login')
     if request.method == 'POST':
-        email = request.GET.get('InputEmail1')
-        password = request.GET.get('InputPassword')
-
-        user = auth.authenticate(username = email, password= password)
+        email = request.POST.get('InputEmail1')
+        print(email)
+        password = request.POST.get('InputPassword')
+        print(password)
+        user = authenticate(request, username = email, password= password)
         if user is not None:
             auth.login(request, user)
+            print('User logged In')
             return redirect('/')
         else:
-            return render(request, 'registration/login.html')
+            return render(request, 'registration/signup.html')
     else:
         return render(request, 'registration/login.html')
+
+
+
+# def login_view(request):
+#     print('I am in Login')
+#     if request.method == 'POST':
+#         email = request.POST.get('InputEmail1')
+#         print(email)
+#         password = request.POST.get('InputPassword')
+#         print(password)
+#         user = authenticate(request, username = email, password= password)
+#         if user is not None:
+#             auth.login(request, user)
+#             return redirect('/')
+#         else:
+#             return render(request, 'registration/signup.html')
+#     else:
+#         return render(request, 'registration/login.html')
 
 
 # def login(request):
@@ -105,34 +129,43 @@ def login(request):
 #         form = AuthenticationForm()
 #     return render(request, 'registration/login.html', {form: form})
 
-
 def signup(request):
     if request.method == 'POST':
-        print("I am here")
-        print(request.POST)
         companyName = request.POST.get('Company_Name')
+        print(companyName )
         comapanyVat = request.POST.get('Company_Vat')
+        print(comapanyVat)
         customerName = request.POST.get('Customer_Name')
+        print(customerName)
         customerNum = request.POST.get('Customer_Number')
+        print(customerNum)
         accountType = request.POST.get('Company_Vat')
+        print(accountType)
         email = request.POST.get('inputEmail')
+        print(email)
         password1 = request.POST.get('password1')
+        print(password1)
         password2 = request.POST.get('password2')
+        print(password2)
         Address = request.POST.get('inputAddress')
+        print(Address)
         city = request.POST.get('inputCity')
+        print(city)
         zipCode = request.POST.get('inputZip')
+        print(zipCode)
         BoxChecked = request.POST.get('gridCheck')
-        print("kjbfkjbkjvsbhv--------", companyName)
+        print(BoxChecked)
 
-        user = User.objects.create_user(customerName, email ,password1)
-        user.save()
-        print('user Created')
-        return render(request, 'registration/login.html')
-        # if password2 == password1:
-        #     return render(request, 'registration/login.html')
-
-        # else:
-        #     print ('Password not match!')
+        if password2 == password1:
+            user = User.objects.create_user(username=customerName, email=email ,password=password1 , company_name=companyName,
+                                            address=Address, city=city, zip_code=zipCode, customer_no=customerNum)
+            user.save()
+            print('user Created')
+            return render(request, 'registration/login.html')
+        else:
+            print('Password not matched.')
+            message = 'Password not matched!'
+            return render(request, 'registration/signup.html', {'message' : message})
     else:
         return render(request, 'registration/signup.html')
 
@@ -148,7 +181,6 @@ def signup(request):
 
 
 class SettingsView(UpdateView):
-
     template_name = 'settings.html'
     model = User
     fields = '__all__'
@@ -260,7 +292,8 @@ class UserListView(LoginRequiredMixin, TemplateView):
 
 
 class UserCreateView(LoginRequiredMixin, CreateView):
-    template_name = 'user/create.html'
+    # template_name = 'user/create.html'
+    template_name = 'registration/signup.html'
     model = User
     fields = [
         'customer_no',
@@ -291,7 +324,7 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
 #         form = AuthenticationForm(request.POST)
 #         if form.is_valid():
 #             form.save()
-
+#
 #             return redirect('user/create.html')
 #     else:
 #         form = AuthenticationForm()

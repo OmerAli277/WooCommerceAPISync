@@ -91,7 +91,7 @@ class WooOrder(models.Model):
    
 
 class WooProduct(models.Model):
-    product_id = models.IntegerField(null=True, blank=True)
+    product_id = models.IntegerField(unique=True, default=0)
     parent_id = models.IntegerField(null=True, blank=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     slug = models.CharField(max_length=255, null=True, blank=True)
@@ -111,10 +111,10 @@ class WooProduct(models.Model):
     shipping_class_id = models.IntegerField(null=True, blank=True)
     backorders = models.CharField(max_length=255, null=True, blank=True)
 
-    price = models.FloatField(null=True, blank=True, default=0)
-    regular_price = models.FloatField(null=True, blank=True, default=0)
-    sale_price = models.FloatField(null=True, blank=True, default=0)
-    total_sales = models.FloatField(null=True, blank=True, default=0)
+    price = models.CharField(max_length=255, null=True, blank=True, default=0)
+    regular_price = models.CharField(max_length=255, null=True, blank=True, default=0)
+    sale_price = models.CharField(max_length=255, null=True, blank=True, default=0)
+    total_sales = models.CharField(max_length=255, null=True, blank=True, default=0)
 
     featured = models.BooleanField(default=False)
     on_sale = models.BooleanField(default=False)
@@ -131,8 +131,8 @@ class WooProduct(models.Model):
     date_created = models.DateTimeField(null=True, blank=True)
   
 
-    def __str__(self):
-        return self.name
+    # def __str__(self):
+    #     return self.product_id
 
     class Meta:
         ordering = ('name',)

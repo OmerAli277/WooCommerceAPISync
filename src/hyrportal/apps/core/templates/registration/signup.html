@@ -5,7 +5,11 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-6">
-            <form method="post">
+            <form method="post" >
+
+                <div class="form-group">
+                    <p><font color="red" >{{ message }}</font></p>
+                 </div>
 
               {% csrf_token %}
                 <div class="form-row">
@@ -25,7 +29,7 @@
                     </div>
 
                       <div class="form-group col-md-6">
-                      <label for="Customer_Name">Company Name</label>
+                      <label for="Customer_Name">Customer Name</label>
                       <input type="text" class="form-control" name="Customer_Name" id="Customer_Name" placeholder="Customer Name">
                     </div>
 

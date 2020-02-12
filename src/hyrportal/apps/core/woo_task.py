@@ -1,9 +1,8 @@
 import json
 import requests
 from woocommerce import API
-# from .models import User, WooCustomer, WooOrder, WooProduct, WooVariant, fortnoxApiDetails
-from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, WooCustomerShipping, WooCustomerBilling
-    fortnoxApiDetails, WooCustomerBilling, WooCustomerShipping
+# from .models import User, WooCustomer, WooOrder, WooProduct, WooVariant, fortnoxApiDetails, WooCustomerShipping, WooCustomerBilling
+from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, WooCustomerShipping, WooCustomerBilling ,fortnoxApiDetails
 from .fn_client import fn_article_api, fn_customer_api, fn_invoice_api, fn_invoice_payment_api
 from django.db import DatabaseError
 
@@ -233,10 +232,10 @@ class woo_fn_sync:
             local_customer = WooCustomer.objects.values('customer_id')
             
             local_ids = {}
-            for lp in local_orders:
+            for lp in local_customer:
                 local_ids[lp['customer_id']] = {'exist': False, 'id':lp['customer_id']}
 
-            for WC in orders:
+            for WC in customers:
                 if local_ids.get(WC['id']) != None: # Exist in both local and woocomerce
                     local_ids[WC['id']]['exist'] = True
                     local_p = WooCustomer.objects.get(customer_id=WC['id'])

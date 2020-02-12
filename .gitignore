@@ -1,5 +1,0 @@
-*.py[co]
-.DS_Store
-.env
-env/
-/static/*

@@ -1,7 +1,9 @@
 import json
 import requests
 from woocommerce import API
-from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, fortnoxApiDetails
+# from .models import User, WooCustomer, WooOrder, WooProduct, WooVariant, fortnoxApiDetails
+from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant,\
+    fortnoxApiDetails, WooCustomerBilling, WooCustomerShipping
 from .fn_client import fn_article_api, fn_customer_api, fn_invoice_api, fn_invoice_payment_api
 from django.db import DatabaseError
 
@@ -53,6 +55,8 @@ class woo_fn_sync:
             # new_product.save()
             # local_products = WooProduct.objects.all()
             # print(local_products)
+
+
             for lp in local_products:
                 print (lp)
                 #if lp['product_id'] not in products[]:
@@ -105,6 +109,8 @@ class woo_fn_sync:
                 # print (product)
 
                 # elif products
+
+
         except DatabaseError as e:
             print('Database error: ' + str(e)) 
 
@@ -115,13 +121,116 @@ class woo_fn_sync:
     def sync_orders(self):
         r = self.wcapi.get("orders")
         orders = r.json()
-        for p in orders:
-            print(p['id'])
-            print('\n\n\n\n\n\n\n\n') 
+        print ('In sync_orders')
+        try :
+            local_orders = WooOrder.objects.all()
+            print(local_orders)
+            for WO in orders:
+                new_order = WooOrder.objects.create(
+                order_id = WO['id'],
+                parent_id = WO['parent_id'],
+                number = WO['number'],
+                order_key =  WO['order_key'],
+                created_via =  WO['created_via'],
+                version =  WO['version'],
+                status =  WO['status'],
+                currency =  WO['currency'],
+                discount_total = WO['discount_total'],
+                discount_tax =  WO['discount_tax'],
+                shipping_total =  WO['shipping_total'],
+                shipping_tax =  WO['shipping_tax'],
+                cart_tax =  WO['cart_tax'],
+                total =  WO['total'],
+                total_tax =  WO['total_tax'],
+                prices_include_tax =  WO['prices_include_tax'],
+                payment_method =  WO['payment_method'],
+                payment_method_title = WO['payment_method_title'],
+                transaction_id =  WO['transaction_id'],
+
+                date_created = WO['date_created'],
+                date_modified = WO['date_modified'],
+                date_paid = WO['date_paid'],
+                date_completed = WO['date_completed'])
+
+                # new_order.save()
+        except DatabaseError as e:
+            print('Database error: ' + str(e))
+
+        # for order in local_orders:
+        #     print(order['id'])
+        #     for WO in orders:
+        #         new_order = WooOrder.objects.create(
+        #         order_id = WO['id'],
+        #         parent_id = WO['parent_id'],
+        #         number = WO['number'],
+        #         order_key =  WO['order_key'],
+        #         created_via =  WO['created_via'],
+        #         version =  WO['version'],
+        #         status =  WO['status'],
+        #         currency =  WO['currency'],
+        #         discount_total = WO['discount_total'],
+        #         discount_tax =  WO['discount_tax'],
+        #         shipping_total =  WO['shipping_total'],
+        #         shipping_tax =  WO['shipping_tax'],
+        #         cart_tax =  WO['cart_tax'],
+        #         total =  WO['total'],
+        #         total_tax =  WO['total_tax'],
+        #         prices_include_tax =  WO['prices_include_tax'],
+        #         payment_method =  WO['payment_method'],
+        #         payment_method_title = WO['payment_method_title'],
+        #         transaction_id =  WO['transaction_id'],
+        #
+        #         date_created = WO['date_created'],
+        #         date_modified = WO['date_modified'],
+        #         date_paid = WO['date_paid'],
+        #         date_completed = WO['date_completed'])
+
+
+        # for p in orders:
+        #     print(p['id'])
+            # print('\n\n\n\n\n\n\n\n')
 
     def sync_customers(self):
         r = self.wcapi.get("customers")
         customers = r.json()
-        for p in customers: 
-            print(p['id'])
-            print('\n\n\n\n\n\n') 
+        try:
+            for WC in customers:
+                new_customer = WooCustomer.objects.create(
+                    date_created = WC['date_created'],
+                    date_modified = WC['date_modified'],
+                    is_paying_customer = WC['is_paying_customer'],
+                    # meta_data = WC['meta_data'],
+                    customer_id = WC['id']
+                )
+                new_customer.save()
+                new_customerBilling = WooCustomerBilling.objects.create(
+                    first_name = WC['billing']['first_name'],
+                    last_name = WC['billing']['last_name'],
+                    company = WC['billing']['company'],
+                    address_1 = WC['billing']['address_1'],
+                    address_2 = WC['billing']['address_2'],
+                    city = WC['billing']['city'],
+                    state = WC['billing']['state'],
+                    postcode = WC['billing']['postcode'],
+                    country = WC['billing']['country'],
+                    email = WC['billing']['email'],
+                    phone = WC['billing']['phone'],
+                    customer = new_customer
+                )
+                new_customerShipping = WooCustomerShipping.objects.create(
+                    customer = new_customer,
+                    first_name = WC['shipping']['first_name'],
+                    last_name = WC['shipping']['last_name'],
+                    company = WC['shipping']['company'],
+                    address_1 = WC['shipping']['address_1'],
+                    address_2 = WC['shipping']['address_2'],
+                    city = WC['shipping']['city'],
+                    state = WC['shipping']['state'],
+                    postcode = WC['shipping']['postcode'],
+                    country = WC['shipping']['country'],
+                )
+        except DatabaseError as e:
+            print('Database error: ' + str(e))
+        # for p in customers:
+            # print(p['id'])
+            # print('\n\n\n\n\n\n')

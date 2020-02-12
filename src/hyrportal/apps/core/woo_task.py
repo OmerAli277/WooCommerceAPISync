@@ -45,7 +45,7 @@ class woo_fn_sync:
     def sync_products(self):
         r = self.wcapi.get("products")
         products = r.json()
-        print('omer ')
+        print('omer ali')
         try: 
             local_products = WooProduct.objects.all()
             print(local_products)

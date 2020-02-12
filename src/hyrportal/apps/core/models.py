@@ -65,7 +65,7 @@ class WooCustomer(models.Model):
     date_modified = models.DateTimeField(null=True, blank=True)
     is_paying_customer = models.BooleanField(default=False)
     meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
-    customer_id = models.IntegerField(null=True, blank=True)
+    customer_id = models.IntegerField(null=True, blank=True, unique=True)
 
 
     # def __str__(self):
@@ -74,7 +74,7 @@ class WooCustomer(models.Model):
 
 class WooOrder(models.Model):
     customer = models.ForeignKey('WooCustomer', on_delete=models.CASCADE)
-    order_id = models.IntegerField(null=True, blank=True)
+    order_id = models.IntegerField(null=True, blank=True, unique=True)
     parent_id = models.IntegerField(default=0)
     number = models.CharField(max_length=255, null=True, blank=True)
     order_key = models.CharField(max_length=255, null=True, blank=True)
@@ -156,7 +156,7 @@ class WooProduct(models.Model):
 
 class WooVariant(models.Model):
     products = models.ForeignKey(to='WooProduct', on_delete=models.CASCADE)
-    variant_id = models.IntegerField(null=True, blank=True)
+    variant_id = models.IntegerField(null=True, blank=True, unique=True)
     description = models.TextField(default=None, null=True, blank=True)
     sku = models.CharField(max_length=255, null=True, blank=True)
     price = models.FloatField(null=True, blank=True, default=0)
@@ -184,7 +184,7 @@ class WooVariant(models.Model):
 class WooOrderItem(models.Model):
     order = models.ForeignKey(to='WooOrder', related_name='woo_orderitems', on_delete=models.CASCADE)
     # subscription = models.ForeignKey(to=WooSubscription, null=True, blank=True, on_delete=models.SET_NULL)
-    orderitem_id = models.IntegerField(null=True, blank=True)
+    orderitem_id = models.IntegerField(null=True, blank=True, unique=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     sku = models.CharField(max_length=255, null=True, blank=True)
     tax_class = models.CharField(max_length=255, null=True, blank=True)

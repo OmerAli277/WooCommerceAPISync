@@ -143,7 +143,7 @@ class woo_fn_sync:
             for lp in local_ids:
                 if lp['exist'] == False: # Delete products which are not avialable in woocommerce
                     WooProduct.objects.filter(product_id=lp['id']).delete()
-                    
+
         except DatabaseError as e:
             print('Database error: ' + str(e)) 
 

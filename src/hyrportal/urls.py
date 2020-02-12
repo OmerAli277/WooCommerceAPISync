@@ -29,7 +29,7 @@ urlpatterns = [
 
 	path('accounts/', include('django.contrib.auth.urls')),
 	path('signup/', views.signup, name='signup'),
-	# path('login/', views.login, name='login'),
+	path('accounts/login/request', views.request, name='request'),
 	path('', RedirectView.as_view(pattern_name='settings', permanent=False)),
 	path('settings/', views.SettingsView.as_view(), name='settings'),
 	path('users/', views.UserListView.as_view(), name='user-list'),

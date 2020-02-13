@@ -741,6 +741,7 @@ class woo_fn_sync:
         except DatabaseError as e:
             print('Database error: ' + str(e))
 
+
     # Customer 
     def fn_customer_obj(self, WC):
 

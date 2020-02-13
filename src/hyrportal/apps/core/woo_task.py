@@ -224,9 +224,149 @@ class woo_fn_sync:
         except DatabaseError as e:
             print('Database error: ' + str(e))
 
-    def sync_customers(self):
+    def fn_customer_obj(self, WC):
 
-        fn_customer = fn_customer_api()
+        fn_name = WC['billing']['first_name'] + WC['billing']['last_name']
+
+        fn_customer_object = {
+            "Customer": {
+                "Address1": WC['billing']['address_1'],
+                "Address2": WC['billing']['address_2'],
+                "City": WC['billing']['city'],
+                "Country": WC['billing']['country'],
+                "CountryCode": WC['billing']['postcode'],
+                "Currency": "SEK",
+                "CustomerNumber": WC['id'],
+                "DeliveryAddress1": WC['shipping']['address_1'],
+                "DeliveryAddress2": WC['shipping']['address_2'],
+                "DeliveryCity": WC['shipping']['city'],
+                "DeliveryCountry": WC['shipping']['country'],
+                "DeliveryCountryCode": WC['shipping']['postcode'],
+                # "DeliveryFax": WC[''],
+                "DeliveryName": WC['billing']['first_name'],
+                "DeliveryPhone1": WC['billing']['phone'],
+                # "DeliveryPhone2": WC[''],
+                # "DeliveryZipCode": WC[''],
+                "Email": WC['billing']['email'],
+                # "EmailInvoice": "",
+                # "EmailInvoiceBCC": "",
+                # "EmailInvoiceCC": "",
+                # "EmailOffer": "",
+                # "EmailOfferBCC": "",
+                # "EmailOfferCC": "",
+                # "EmailOrder": "",
+                # "EmailOrderBCC": "",
+                # "EmailOrderCC": "",
+                # "Fax": null,
+                # "InvoiceAdministrationFee": null,
+                # "InvoiceDiscount": null,
+                # "InvoiceFreight": null,
+                # "InvoiceRemark": "",
+                "Name": fn_name,
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "Phone1": null,
+                # "Phone2": null,
+                # "PriceList": "A",
+                # "Project": null,
+                # "SalesAccount": null,
+                # "ShowPriceVATIncluded": false,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "",
+                # "Type": "COMPANY",
+                # "VATNumber": "",
+                # "VATType": "SEVAT",
+                # "VisitingAddress": null,
+                # "VisitingCity": null,
+                # "VisitingCountry": null,
+                # "VisitingCountryCode": null,
+                # "VisitingZipCode": null,
+                # "WWW": "",
+                # "WayOfDelivery": "",
+                # "YourReference": "",
+                # "ZipCode": null
+            }
+        }
+        
+        fn_customer_object = json.dumps(fn_customer_object)
+
+        return fn_customer_object
+
+    def fn_customer_obj_u(self, WC):
+
+        fn_name = WC['billing']['first_name'] + WC['billing']['last_name']
+
+        fn_customer_object = {
+            "Customer": {
+                "Address1": WC['billing']['address_1'],
+                "Address2": WC['billing']['address_2'],
+                "City": WC['billing']['city'],
+                "Country": WC['billing']['country'],
+                "CountryCode": WC['billing']['postcode'],
+                "Currency": "SEK",
+                # "CustomerNumber": WC['id'],
+                "DeliveryAddress1": WC['shipping']['address_1'],
+                "DeliveryAddress2": WC['shipping']['address_2'],
+                "DeliveryCity": WC['shipping']['city'],
+                "DeliveryCountry": WC['shipping']['country'],
+                "DeliveryCountryCode": WC['shipping']['postcode'],
+                # "DeliveryFax": WC[''],
+                "DeliveryName": WC['billing']['first_name'],
+                "DeliveryPhone1": WC['billing']['phone'],
+                # "DeliveryPhone2": WC[''],
+                # "DeliveryZipCode": WC[''],
+                "Email": WC['billing']['email'],
+                # "EmailInvoice": "",
+                # "EmailInvoiceBCC": "",
+                # "EmailInvoiceCC": "",
+                # "EmailOffer": "",
+                # "EmailOfferBCC": "",
+                # "EmailOfferCC": "",
+                # "EmailOrder": "",
+                # "EmailOrderBCC": "",
+                # "EmailOrderCC": "",
+                # "Fax": null,
+                # "InvoiceAdministrationFee": null,
+                # "InvoiceDiscount": null,
+                # "InvoiceFreight": null,
+                # "InvoiceRemark": "",
+                "Name": fn_name,
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "Phone1": null,
+                # "Phone2": null,
+                # "PriceList": "A",
+                # "Project": null,
+                # "SalesAccount": null,
+                # "ShowPriceVATIncluded": false,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "",
+                # "Type": "COMPANY",
+                # "VATNumber": "",
+                # "VATType": "SEVAT",
+                # "VisitingAddress": null,
+                # "VisitingCity": null,
+                # "VisitingCountry": null,
+                # "VisitingCountryCode": null,
+                # "VisitingZipCode": null,
+                # "WWW": "",
+                # "WayOfDelivery": "",
+                # "YourReference": "",
+                # "ZipCode": null
+            }
+        }
+        
+        fn_customer_object = json.dumps(fn_customer_object)
+
+        return fn_customer_object
+
+    def sync_customers(self):
+        # client_secret, access_token = self.fortnox_authentication()
+
+        client_secret = 'Pmw91MFrEm' 
+        access_token = 'c40acba2-3eb9-4d84-9bea-497ea5959542'
+
+        fn_customer = fn_customer_api(access_token, client_secret)
 
         r = self.wcapi.get("customers")
         customers = r.json()
@@ -284,6 +424,12 @@ class woo_fn_sync:
                         local_customerShipping.postcode = WC['shipping']['postcode']
                         local_customerShipping.country = WC['shipping']['country']
                         local_customerShipping.save()
+
+                        #fortnox API Update
+                        fn_result = fn_customer.fn_update_customer(WC['id'] , self.fn_customer_obj_u(WC))
+                        print('Customer Update:')
+                        print(fn_result)
+
                         
                 else: # Does not exist in local, but exist in woocomerce
                     new_customer = WooCustomer.objects.create(
@@ -320,73 +466,19 @@ class woo_fn_sync:
                         country = WC['shipping']['country'],
                     )
 
-                    # Fortnox API Create 
-
-                    fn_customer_object = {
-                        "Customer": {
-                            "Address1": WC['billing']['address_1'],
-                            "Address2": WC['billing']['address_2'],
-                            "City": WC['billing']['city'],
-                            "Country": WC['billing']['country'],
-                            "CountryCode": WC['billing']['postcode'],
-                            "Currency": "SEK",
-                            "CustomerNumber": WC['id'],
-                            "DeliveryAddress1": WC['shipping']['address_1'],
-                            "DeliveryAddress2": WC['shipping']['address_2'],
-                            "DeliveryCity": WC['shipping']['city'],
-                            "DeliveryCountry": WC['shipping']['country'],
-                            "DeliveryCountryCode": WC['shipping']['postcode'],
-                            "DeliveryFax": WC[''],
-                            "DeliveryName": WC[''],
-                            "DeliveryPhone1": WC['billing']['phone'],
-                            # "DeliveryPhone2": WC[''],
-                            # "DeliveryZipCode": WC[''],
-                            "Email": WC['billing']['email'],
-                            # "EmailInvoice": "",
-                            # "EmailInvoiceBCC": "",
-                            # "EmailInvoiceCC": "",
-                            # "EmailOffer": "",
-                            # "EmailOfferBCC": "",
-                            # "EmailOfferCC": "",
-                            # "EmailOrder": "",
-                            # "EmailOrderBCC": "",
-                            # "EmailOrderCC": "",
-                            "Fax": null,
-                            "InvoiceAdministrationFee": null,
-                            "InvoiceDiscount": null,
-                            "InvoiceFreight": null,
-                            "InvoiceRemark": "",
-                            "Name": "Klara Norstr\u00f6m",
-                            "OrganisationNumber": "",
-                            "OurReference": "",
-                            "Phone1": null,
-                            "Phone2": null,
-                            "PriceList": "A",
-                            "Project": null,
-                            "SalesAccount": null,
-                            "ShowPriceVATIncluded": false,
-                            "TermsOfDelivery": "",
-                            "TermsOfPayment": "",
-                            "Type": "COMPANY",
-                            "VATNumber": "",
-                            "VATType": "SEVAT",
-                            # "VisitingAddress": null,
-                            # "VisitingCity": null,
-                            # "VisitingCountry": null,
-                            # "VisitingCountryCode": null,
-                            # "VisitingZipCode": null,
-                            "WWW": "",
-                            "WayOfDelivery": "",
-                            "YourReference": "",
-                            "ZipCode": null
-                        }
-                    }
-
-                    fn_customer.fn_create_customer(fn_customer_object)
+                    # Fortnox API Create
+                    fn_result = fn_customer.fn_create_customer(self.fn_customer_obj(WC))
+                    print('Customer Created:')
+                    print(fn_result)
             
             for lp in local_ids:
                 if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
                     WooCustomer.objects.filter(customer_id=local_ids[lp]['id']).delete()
+
+                    # Fortnox API Delete
+                    fn_result = fn_customer.fn_delete_customer(WC['id'])
+                    print('Customer Update:')
+                    print(fn_result)
                
         except DatabaseError as e:
             print('Database error: ' + str(e))

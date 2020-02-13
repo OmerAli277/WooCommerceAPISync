@@ -285,6 +285,7 @@ class woo_fn_sync:
     
 
     # Order and Fortnox Invoice
+
     def fn_invoice_obj(self, WO):
 
         row_items = []

@@ -67,6 +67,10 @@ class WooCustomer(models.Model):
     meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
     customer_id = models.IntegerField(null=True, blank=True, unique=True)
 
+    email = models.CharField(max_length=255, null=True, blank=True)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    username = models.CharField(max_length=255, null=True, blank=True)
 
     # def __str__(self):
     #     return f"{self.last_name}, {self.first_name}"

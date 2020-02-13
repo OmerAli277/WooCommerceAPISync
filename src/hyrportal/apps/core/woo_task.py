@@ -97,7 +97,7 @@ class woo_fn_sync:
             }
         }
 
-        return json.dumps(fn_customer_object)
+        return json.dumps(fn_article_object)
 
     def fn_article_obj_u(self, WP):
 
@@ -152,7 +152,8 @@ class woo_fn_sync:
             }
         }
 
-        return json.dumps(fn_customer_object)
+        customer = json.dumps(fn_article_object)
+        return customer
     
     def sync_products(self):
 
@@ -218,7 +219,7 @@ class woo_fn_sync:
                         local_p.save()
 
                         # fortnox API Update
-                        result = fn_article(wp['id'], self.fn_article_obj_u(wp))
+                        result = fn_article_api.fn_update_article(wp['id'], self.fn_article_obj_u(wp))
                         print('Arctile Updated:')
                         print(result)
 
@@ -258,7 +259,7 @@ class woo_fn_sync:
                         backorders_allowed= wp['backorders_allowed'] ,
                         backordered = wp['backordered'], 
                         sold_individually = wp['sold_individually'], 
-                        shipping_required = wp['shipping_required']
+                        shipping_required = wp['shipping_required'],
                         # shipping_taxable= wp['shipping_taxable']
                         # meta_data = wp['meta_data'], 
                         date_created = wp['date_created']

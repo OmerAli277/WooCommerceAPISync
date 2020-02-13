@@ -140,8 +140,8 @@ class woo_fn_sync:
                     new_product.save()
 
             for lp in local_ids:
-                if lp['exist'] == False: # Delete products which are not avialable in woocommerce
-                    WooProduct.objects.filter(product_id=lp['id']).delete()
+                if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                    WooProduct.objects.filter(product_id=local_ids[lp]['id']).delete()
 
         except DatabaseError as e:
             print('Database error: ' + str(e)) 
@@ -218,8 +218,8 @@ class woo_fn_sync:
 
             
             for lp in local_ids:
-                if lp['exist'] == False: # Delete products which are not avialable in woocommerce
-                    WooOrder.objects.filter(order_id=lp['id']).delete()
+                if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                    WooOrder.objects.filter(order_id=local_ids[lp]['id']).delete()
                 
         except DatabaseError as e:
             print('Database error: ' + str(e))
@@ -385,8 +385,8 @@ class woo_fn_sync:
                     fn_customer.fn_create_customer(fn_customer_object)
             
             for lp in local_ids:
-                if lp['exist'] == False: # Delete products which are not avialable in woocommerce
-                    WooCustomer.objects.filter(customer_id=lp['id']).delete()
+                if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                    WooCustomer.objects.filter(customer_id=local_ids[lp]['id']).delete()
                
         except DatabaseError as e:
             print('Database error: ' + str(e))

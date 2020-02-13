@@ -226,6 +226,9 @@ class woo_fn_sync:
             print('Database error: ' + str(e))
 
     def sync_customers(self):
+
+        fn_customer = fn_customer_api()
+
         r = self.wcapi.get("customers")
         customers = r.json()
 
@@ -313,6 +316,70 @@ class woo_fn_sync:
                         postcode = WC['shipping']['postcode'],
                         country = WC['shipping']['country'],
                     )
+
+                    # Fortnox API Create 
+
+                    fn_customer_object = {
+                        "Customer": {
+                            "Address1": WC['billing']['address_1'],
+                            "Address2": WC['billing']['address_2'],
+                            "City": WC['billing']['city'],
+                            "Country": WC['billing']['country'],
+                            "CountryCode": WC['billing']['postcode'],
+                            "Currency": "SEK",
+                            "CustomerNumber": WC['id'],
+                            "DeliveryAddress1": WC['shipping']['address_1'],
+                            "DeliveryAddress2": WC['shipping']['address_2'],
+                            "DeliveryCity": WC['shipping']['city'],
+                            "DeliveryCountry": WC['shipping']['country'],
+                            "DeliveryCountryCode": WC['shipping']['postcode'],
+                            "DeliveryFax": WC[''],
+                            "DeliveryName": WC[''],
+                            "DeliveryPhone1": WC['billing']['phone'],
+                            # "DeliveryPhone2": WC[''],
+                            # "DeliveryZipCode": WC[''],
+                            "Email": WC['billing']['email'],
+                            # "EmailInvoice": "",
+                            # "EmailInvoiceBCC": "",
+                            # "EmailInvoiceCC": "",
+                            # "EmailOffer": "",
+                            # "EmailOfferBCC": "",
+                            # "EmailOfferCC": "",
+                            # "EmailOrder": "",
+                            # "EmailOrderBCC": "",
+                            # "EmailOrderCC": "",
+                            "Fax": null,
+                            "InvoiceAdministrationFee": null,
+                            "InvoiceDiscount": null,
+                            "InvoiceFreight": null,
+                            "InvoiceRemark": "",
+                            "Name": "Klara Norstr\u00f6m",
+                            "OrganisationNumber": "",
+                            "OurReference": "",
+                            "Phone1": null,
+                            "Phone2": null,
+                            "PriceList": "A",
+                            "Project": null,
+                            "SalesAccount": null,
+                            "ShowPriceVATIncluded": false,
+                            "TermsOfDelivery": "",
+                            "TermsOfPayment": "",
+                            "Type": "COMPANY",
+                            "VATNumber": "",
+                            "VATType": "SEVAT",
+                            # "VisitingAddress": null,
+                            # "VisitingCity": null,
+                            # "VisitingCountry": null,
+                            # "VisitingCountryCode": null,
+                            # "VisitingZipCode": null,
+                            "WWW": "",
+                            "WayOfDelivery": "",
+                            "YourReference": "",
+                            "ZipCode": null
+                        }
+                    }
+
+                    fn_customer.fn_create_customer(fn_customer_object)
             
             for lp in local_ids:
                 if lp['exist'] == False: # Delete products which are not avialable in woocommerce

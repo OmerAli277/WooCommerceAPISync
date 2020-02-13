@@ -219,7 +219,7 @@ class woo_fn_sync:
                         local_p.save()
 
                         # fortnox API Update
-                        result = fn_article_api.fn_update_article(wp['id'], self.fn_article_obj_u(wp))
+                        result = fn_article.fn_update_article(str(wp['id']), self.fn_article_obj_u(wp))
                         print('Arctile Updated:')
                         print(result)
 
@@ -266,7 +266,7 @@ class woo_fn_sync:
                         )
                     
                     # Fortnox API Create
-                    result = fn_article.fn_create_article(wp['id'] ,self.fn_article_obj(wp))
+                    result = fn_article.fn_create_article(self.fn_article_obj(wp))
                     print('Article created:')
                     print(result)
 
@@ -276,7 +276,7 @@ class woo_fn_sync:
                     WooProduct.objects.filter(product_id=local_ids[lp]['id']).delete()
 
                     # Fortnox API Create
-                    result = fn_article.fn_delete_article(wp['id'])
+                    result = fn_article.fn_delete_article(str(local_ids[lp]['id']))
                     print('Article created:')
                     print(result)
 
@@ -944,7 +944,7 @@ class woo_fn_sync:
                         local_customerShipping.save()
 
                         #fortnox API Update
-                        fn_result = fn_customer.fn_update_customer(WC['id'] , self.fn_customer_obj_u(WC))
+                        fn_result = fn_customer.fn_update_customer(str(WC['id']) , self.fn_customer_obj_u(WC))
                         print('Customer Update:')
                         print(fn_result)
 
@@ -990,11 +990,11 @@ class woo_fn_sync:
                     print(fn_result)
             
             for lp in local_ids:
-                if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                if local_ids[lp]['exist'] == False: # Delete products which are not available in WooCommerce
                     WooCustomer.objects.filter(customer_id=local_ids[lp]['id']).delete()
 
                     # Fortnox API Delete
-                    fn_result = fn_customer.fn_delete_customer(WC['id'])
+                    fn_result = fn_customer.fn_delete_customer(str(local_ids[lp]['id']))
                     print('Customer Update:')
                     print(fn_result)
                

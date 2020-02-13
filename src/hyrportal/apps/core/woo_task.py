@@ -42,8 +42,128 @@ class woo_fn_sync:
         #     except requests.exceptions.RequestException as e:
         #         print('fn_authentication HTTP Request failed')
         return client_secret, access_token
+    
+    # Article
+    def fn_article_obj(self, WP):
 
+        if WP['short_description'] != "":
+            WP['short_description'] = "Kindly provide description."
+
+        fn_article_object = {
+            "Article": {
+                # "@url": "https://api.fortnox.se/3/articles/FRPPLUS",
+                # "Active": true,
+                "ArticleNumber": WP['id'],
+                # "Bulky": false,
+                # "ConstructionAccount": 0,
+                # "Depth": 0,
+                "Description": WP['short_description'],
+                # "DisposableQuantity": 0,
+                # "EAN": "",
+                # "EUAccount": 3018,
+                # "EUVATAccount": 3016,
+                # "ExportAccount": 3015,
+                "Height": WP['dimensions']['height'],
+                # "Housework": false,
+                # "HouseworkType": null,
+                # "Manufacturer": null,
+                # "ManufacturerArticleNumber": "",
+                "Note": WP['description'],
+                # "PurchaseAccount": 4011,
+                # "PurchasePrice": 0,
+                "QuantityInStock": WP['stock_quantity'],
+                # "ReservedQuantity": 0,
+                # "SalesAccount": 3011,
+                # "StockGoods": false,
+                # "StockPlace": null,
+                # "StockValue": 0,
+                # "StockWarning": 0,
+                # "SupplierName": null,
+                # "SupplierNumber": null,
+                "Type": WP['type'],
+                # "Unit": null,
+                # "VAT": 25,
+                # "WebshopArticle": false,
+                "Weight": WP['weight'],
+                "Width": WP['dimensions']['width'],
+                # "Expired": false,
+                "SalesPrice": WP['sale_price'],
+                # "CostCalculationMethod": null,
+                # "StockAccount": null,
+                # "StockChangeAccount": null,
+                # "DirectCost": 0,
+                # "FreightCost": 0,
+                # "OtherCost": 0
+            }
+        }
+
+        return json.dumps(fn_customer_object)
+
+    def fn_article_obj_u(self, WP):
+
+        if WP['short_description'] != "":
+            WP['short_description'] = "Kindly provide description."
+
+        fn_article_object = {
+            "Article": {
+                # "@url": "https://api.fortnox.se/3/articles/FRPPLUS",
+                # "Active": true,
+                # "ArticleNumber": WP['id'],
+                # "Bulky": false,
+                # "ConstructionAccount": 0,
+                # "Depth": 0,
+                "Description": WP['short_description'],
+                # "DisposableQuantity": 0,
+                # "EAN": "",
+                # "EUAccount": 3018,
+                # "EUVATAccount": 3016,
+                # "ExportAccount": 3015,
+                "Height": WP['dimensions']['height'],
+                # "Housework": false,
+                # "HouseworkType": null,
+                # "Manufacturer": null,
+                # "ManufacturerArticleNumber": "",
+                "Note": WP['description'],
+                # "PurchaseAccount": 4011,
+                # "PurchasePrice": 0,
+                "QuantityInStock": WP['stock_quantity'],
+                # "ReservedQuantity": 0,
+                # "SalesAccount": 3011,
+                # "StockGoods": false,
+                # "StockPlace": null,
+                # "StockValue": 0,
+                # "StockWarning": 0,
+                # "SupplierName": null,
+                # "SupplierNumber": null,
+                "Type": WP['type'],
+                # "Unit": null,
+                # "VAT": 25,
+                # "WebshopArticle": false,
+                "Weight": WP['weight'],
+                "Width": WP['dimensions']['width'],
+                # "Expired": false,
+                "SalesPrice": WP['sale_price'],
+                # "CostCalculationMethod": null,
+                # "StockAccount": null,
+                # "StockChangeAccount": null,
+                # "DirectCost": 0,
+                # "FreightCost": 0,
+                # "OtherCost": 0
+            }
+        }
+
+        return json.dumps(fn_customer_object)
+    
     def sync_products(self):
+
+         # client_secret, access_token = self.fortnox_authentication()
+
+        client_secret = 'Pmw91MFrEm' 
+        access_token = 'c40acba2-3eb9-4d84-9bea-497ea5959542'
+
+        fn_article = fn_article_api(access_token, client_secret)
+
+
         r = self.wcapi.get("products")
         products = r.json()
         
@@ -96,6 +216,12 @@ class woo_fn_sync:
                         local_p.sold_individually = wp['sold_individually'] 
                         local_p.shipping_required = wp['shipping_required']
                         local_p.save()
+
+                        # fortnox API Update
+                        result = fn_article(wp['id'], self.fn_article_obj_u(wp))
+                        print('Arctile Updated:')
+                        print(result)
+
                 else: # Does not exist in local, but exist in woocomerce
                     new_product = WooProduct.objects.create(
                         product_id = wp['id'] ,
@@ -135,17 +261,28 @@ class woo_fn_sync:
                         shipping_required = wp['shipping_required']
                         # shipping_taxable= wp['shipping_taxable']
                         # meta_data = wp['meta_data'], 
-                        # date_created = wp['date_created']
+                        date_created = wp['date_created']
                         )
-                    new_product.save()
+                    
+                    # Fortnox API Create
+                    result = fn_article.fn_create_article(wp['id'] ,self.fn_article_obj(wp))
+                    print('Article created:')
+                    print(result)
+
 
             for lp in local_ids:
                 if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
                     WooProduct.objects.filter(product_id=local_ids[lp]['id']).delete()
 
+                    # Fortnox API Create
+                    result = fn_article.fn_delete_article(wp['id'])
+                    print('Article created:')
+                    print(result)
+
         except DatabaseError as e:
             print('Database error: ' + str(e)) 
-
+    
+    # Order and Fortnox Invoice
     def sync_orders(self):
         r = self.wcapi.get("orders")
         orders = r.json()
@@ -224,6 +361,7 @@ class woo_fn_sync:
         except DatabaseError as e:
             print('Database error: ' + str(e))
 
+    # Customer 
     def fn_customer_obj(self, WC):
 
         fn_name = WC['billing']['first_name'] + WC['billing']['last_name']

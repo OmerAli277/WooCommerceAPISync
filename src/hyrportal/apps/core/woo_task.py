@@ -688,7 +688,7 @@ class woo_fn_sync:
                             print('Invoice payment Updated:')
                             print(result)
 
-                else: # Does not exist in local, but exist in woocomerce
+                    else: # Does not exist in local, but exist in woocomerce
                      new_order = WooOrder.objects.create(
                         order_id = WO['id'],
                         parent_id = WO['parent_id'],
@@ -715,15 +715,15 @@ class woo_fn_sync:
                         date_paid = WO['date_paid'],
                         date_completed = WO['date_completed'])
 
-                        # Fortnox API Update
-                        if WO['status'] != "completed" : 
-                            result  = fn_invoice.fn_create_invoice(self.fn_invoice_obj(WO))
-                            print('Invoice created:')
-                            print(result)
-                        else:
-                            result  = fn_invoice_payment.fn_create_invoice_payment(self.fn_invoice_obj(WO))
-                            print('Invoice payment created:')
-                            print(result)
+                    # Fortnox API Update
+                    if WO['status'] != "completed" :
+                        result  = fn_invoice.fn_create_invoice(self.fn_invoice_obj(WO))
+                        print('Invoice created:')
+                        print(result)
+                    else:
+                        result  = fn_invoice_payment.fn_create_invoice_payment(self.fn_invoice_obj(WO))
+                        print('Invoice payment created:')
+                        print(result)
             
             for lp in local_ids:
                 if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce

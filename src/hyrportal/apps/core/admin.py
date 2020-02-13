@@ -30,12 +30,12 @@ admin.site.register(User)
 #     fields = ('customer_no', 'customer_name', 'account_type', 'owner')
 
 
-@admin.register(WooCustomer)
-class WooCustomerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'state',
-                    'postcode', 'country', 'email', 'phone')
-    fields = ('first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'state',
-              'postcode', 'country', 'email', 'phone')
+# @admin.register(WooCustomer)
+# class WooCustomerAdmin(admin.ModelAdmin):
+#     list_display = ('first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'state',
+#                     'postcode', 'country', 'email', 'phone')
+#     fields = ('first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'state',
+#               'postcode', 'country', 'email', 'phone')
 
 
 @admin.register(WooProduct)

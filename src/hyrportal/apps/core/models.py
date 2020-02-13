@@ -33,16 +33,9 @@ class WooMetaData(models.Model):
     # def __str__(self):
     #     return f"{self.key} : {self.value}"
 
-
-class WooCustomer(models.Model):
-    date_created = models.DateTimeField(null=True, blank=True)
-    date_modified = models.DateTimeField(null=True, blank=True)
-    is_paying_customer = models.BooleanField(default=False)
-    orders_count = models.IntegerField(null=True, blank=True, default=0)
-    total_spent = models.FloatField(null=True, blank=True, default=0)
-    meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
-
-    customer_id = models.IntegerField(null=True, blank=True)
+#
+class WooCustomerBilling(models.Model):
+    customer = models.ForeignKey('WooCustomer', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
     company = models.CharField(max_length=255, null=True, blank=True)
@@ -55,13 +48,33 @@ class WooCustomer(models.Model):
     email = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
 
+class WooCustomerShipping(models.Model):
+    customer = models.ForeignKey('WooCustomer', on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=255, null=True, blank=True)
+    last_name = models.CharField(max_length=255, null=True, blank=True)
+    company = models.CharField(max_length=255, null=True, blank=True)
+    address_1 = models.CharField(max_length=255, null=True, blank=True)
+    address_2 = models.CharField(max_length=255, null=True, blank=True)
+    city = models.CharField(max_length=255, null=True, blank=True)
+    state = models.CharField(max_length=255, null=True, blank=True)
+    postcode = models.CharField(max_length=255, null=True, blank=True)
+    country = models.CharField(max_length=255, null=True, blank=True)
+
+class WooCustomer(models.Model):
+    date_created = models.DateTimeField(null=True, blank=True)
+    date_modified = models.DateTimeField(null=True, blank=True)
+    is_paying_customer = models.BooleanField(default=False)
+    meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
+    customer_id = models.IntegerField(null=True, blank=True, unique=True)
+
+
     # def __str__(self):
     #     return f"{self.last_name}, {self.first_name}"
 
 
 class WooOrder(models.Model):
     customer = models.ForeignKey('WooCustomer', on_delete=models.CASCADE)
-    order_id = models.IntegerField(null=True, blank=True)
+    order_id = models.IntegerField(null=True, blank=True, unique=True)
     parent_id = models.IntegerField(default=0)
     number = models.CharField(max_length=255, null=True, blank=True)
     order_key = models.CharField(max_length=255, null=True, blank=True)
@@ -69,14 +82,15 @@ class WooOrder(models.Model):
     version = models.CharField(max_length=255, null=True, blank=True)
     status = models.CharField(max_length=255, null=True, blank=True)
     currency = models.CharField(max_length=255, null=True, blank=True)
-    discount_total = models.FloatField(null=True, blank=True, default=0)
-    discount_tax = models.FloatField(null=True, blank=True, default=0)
-    shipping_total = models.FloatField(null=True, blank=True, default=0)
-    shipping_tax = models.FloatField(null=True, blank=True, default=0)
-    cart_tax = models.FloatField(null=True, blank=True, default=0)
-    total = models.FloatField(null=True, blank=True, default=0)
-    total_tax = models.FloatField(null=True, blank=True, default=0)
-    prices_include_tax = models.FloatField(null=True, blank=True, default=0)
+
+    discount_total = models.CharField(max_length=255, null=True, blank=True)
+    discount_tax = models.CharField(max_length=255, null=True, blank=True)
+    shipping_total = models.CharField(max_length=255, null=True, blank=True)
+    shipping_tax = models.CharField(max_length=255, null=True, blank=True)
+    cart_tax = models.CharField(max_length=255, null=True, blank=True)
+    total = models.CharField(max_length=255, null=True, blank=True)
+    total_tax = models.CharField(max_length=255, null=True, blank=True)
+    prices_include_tax = models.CharField(max_length=255, null=True, blank=True)
     payment_method = models.CharField(max_length=255, null=True, blank=True)
     payment_method_title = models.CharField(max_length=255, null=True, blank=True)
     transaction_id = models.CharField(max_length=255, null=True, blank=True)
@@ -128,7 +142,9 @@ class WooProduct(models.Model):
     shipping_required = models.BooleanField(default=False)
     shipping_taxable = models.BooleanField(default=False)
     meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
+
     date_created = models.DateTimeField(null=True, blank=True)
+    date_modified = models.DateTimeField(null=True, blank=True)
   
 
     # def __str__(self):
@@ -140,7 +156,7 @@ class WooProduct(models.Model):
 
 class WooVariant(models.Model):
     products = models.ForeignKey(to='WooProduct', on_delete=models.CASCADE)
-    variant_id = models.IntegerField(null=True, blank=True)
+    variant_id = models.IntegerField(null=True, blank=True, unique=True)
     description = models.TextField(default=None, null=True, blank=True)
     sku = models.CharField(max_length=255, null=True, blank=True)
     price = models.FloatField(null=True, blank=True, default=0)
@@ -168,7 +184,7 @@ class WooVariant(models.Model):
 class WooOrderItem(models.Model):
     order = models.ForeignKey(to='WooOrder', related_name='woo_orderitems', on_delete=models.CASCADE)
     # subscription = models.ForeignKey(to=WooSubscription, null=True, blank=True, on_delete=models.SET_NULL)
-    orderitem_id = models.IntegerField(null=True, blank=True)
+    orderitem_id = models.IntegerField(null=True, blank=True, unique=True)
     name = models.CharField(max_length=255, null=True, blank=True)
     sku = models.CharField(max_length=255, null=True, blank=True)
     tax_class = models.CharField(max_length=255, null=True, blank=True)

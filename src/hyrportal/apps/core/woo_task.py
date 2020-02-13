@@ -250,6 +250,10 @@ class woo_fn_sync:
                         local_p.is_paying_customer = WC['is_paying_customer']
                         # meta_data = WC['meta_data'],
                         local_p.customer_id = WC['id']
+                        local_p.first_name = WC['first_name']
+                        local_p.last_name = WC['last_name']
+                        local_p.username = WC['username']
+                        local_p.email = WC['email']
                         local_p.save()
 
                         local_customerBilling.first_name = WC['billing']['first_name']

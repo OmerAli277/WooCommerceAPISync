@@ -283,8 +283,358 @@ class woo_fn_sync:
         except DatabaseError as e:
             print('Database error: ' + str(e)) 
     
+
     # Order and Fortnox Invoice
+    def fn_invoice_obj(self, WO):
+
+        row_items = []
+        for item in  WO['line_items']:
+            row_items.push({
+                {
+                    # "AccountNumber": 3011,
+                    "ArticleNumber": item['product_id'],
+                    # "ContributionPercent": 37.740000000000002,
+                    # "ContributionValue": 600,
+                    # "CostCenter": "",
+                    "DeliveredQuantity": item['quantity'],
+                    # "Description": "USB-minne 32GB",
+                    # "Discount": 0,
+                    # "DiscountType": "PERCENT",
+                    # "HouseWork": false,
+                    # "HouseWorkHoursToReport": null,
+                    # "HouseWorkType": null,
+                    "Price": item['price'],
+                    # "Project": 0,
+                    "Total": item['total'],
+                    # "Unit": "st",
+                    # "VAT": 25
+                }
+            })
+
+
+        fn_invoice = {
+            "Invoice": {
+                # "@url": "https://api.fortnox.se/3/invoices/204",
+                # "@urlTaxReductionList": "https://api.fortnox.se/3/taxreductions?filter=invoices&referencenumber=204",
+                "Address1": WO['billing']['address_1'],
+                "Address2": WO['billing']['address_2'],
+                # "AdministrationFee": "0,00",
+                # "AdministrationFeeVAT": 0,
+                "Balance": 1988,
+                # "BasisTaxReduction": 0,
+                # "Booked": false,
+                "Cancelled": False,
+                "City": WO['billing']['city'],
+                # "Comments": "",
+                # "ContractReference": 0,
+                # "ContributionPercent": 37.740000000000002,
+                # "ContributionValue": 600,
+                # "CostCenter": "",
+                "Country": WO['billing']['country'],
+                # "Credit": "false",
+                # "CreditInvoiceReference": 0,
+                "Currency": WO['currency'],
+                # "CurrencyRate": 1,
+                # "CurrencyUnit": 1,
+                "CustomerName": WO['billing']['first_name'] + WO['Billing']['last_name'],
+                "CustomerNumber": WO['customer_id'],
+                "DeliveryAddress1": WO['shipping']['address_1'],
+                "DeliveryAddress2": WO['shipping']['address_2'],
+                "DeliveryCity": WO['shipping']['city'],
+                "DeliveryCountry": WO['shipping']['country'],
+                # "DeliveryDate": null,
+                # "DeliveryName": "",
+                "DeliveryZipCode": WO['shipping']['postcode'],
+                "DocumentNumber": WO['id'],
+                # "DueDate": "2015-02-11",
+                # "EDIInformation": {
+                #     "EDIGlobalLocationNumber": "",
+                #     "EDIGlobalLocationNumberDelivery": "",
+                #     "EDIInvoiceExtra1": "",
+                #     "EDIInvoiceExtra2": "",
+                #     "EDIOurElectronicReference": "",
+                #     "EDIYourElectronicReference": ""
+                # },
+                # "EUQuarterlyReport": false,
+                # "EmailInformation": {
+                #     "EmailAddressBCC": null,
+                #     "EmailAddressCC": null,
+                #     "EmailAddressFrom": null,
+                #     "EmailAddressTo": "",
+                #     "EmailBody": "Faktura nummer {no} bifogas ",
+                #     "EmailSubject": "Detta \u00e4r din faktura"
+                # },
+                # "ExternalInvoiceReference1": "",
+                # "ExternalInvoiceReference2": "",
+                # "Freight": "0,00",
+                # "FreightVAT": 0,
+                # "Gross": 1590,
+                # "HouseWork": false,
+                "InvoiceDate": WO['date_created'],
+                # "InvoicePeriodEnd": "",
+                # "InvoicePeriodStart": "",
+                # "InvoiceReference": 0,
+                "InvoiceRows": row_items,
+                "InvoiceType": "INVOICE",
+                # "Labels": [
+                #     {
+                #         "Id": 5
+                #     },
+                #     {
+                #         "Id": 11
+                #     }
+                # ],
+                # "Language": "SV",
+                # "LastRemindDate": null,
+                # "Net": 1590,
+                # "NotCompleted": false,
+                # "OCR": "20453",
+                # "OfferReference": 0,
+                # "OrderReference": 0,
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "PaymentWay": "",
+                "Phone1": WO['billing']['phone'],
+                # "Phone2": "",
+                # "PriceList": "A",
+                # "PrintTemplate": "st",
+                # "Project": 0,
+                # "Remarks": "",
+                # "Reminders": 0,
+                # "RoundOff": 0.5,
+                # "Sent": false,
+                # "TaxReduction": null,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "30",
+                "Total": WO['total'],
+                # "TotalToPay": 1988,
+                # "TotalVAT": 397.5,
+                # "VATIncluded": false,
+                # "VoucherNumber": null,
+                # "VoucherSeries": null,
+                # "VoucherYear": null,
+                # "WayOfDelivery": "",
+                "YourOrderNumber": WO['id'],
+                # "YourReference": "",
+                # "ZipCode": "385 31"
+            }
+        }
+
+        return json.dumps(fn_invoice)
+    
+    def fn_invoice_obj_u(self, WO):
+
+        row_items = []
+        for item in  WO['line_items']:
+            row_items.push({
+                {
+                    # "AccountNumber": 3011,
+                    "ArticleNumber": item['product_id'],
+                    # "ContributionPercent": 37.740000000000002,
+                    # "ContributionValue": 600,
+                    # "CostCenter": "",
+                    "DeliveredQuantity": item['quantity'],
+                    # "Description": "USB-minne 32GB",
+                    # "Discount": 0,
+                    # "DiscountType": "PERCENT",
+                    # "HouseWork": false,
+                    # "HouseWorkHoursToReport": null,
+                    # "HouseWorkType": null,
+                    "Price": item['price'],
+                    # "Project": 0,
+                    "Total": item['total'],
+                    # "Unit": "st",
+                    # "VAT": 25
+                }
+            })
+
+
+        fn_invoice = {
+            "Invoice": {
+                # "@url": "https://api.fortnox.se/3/invoices/204",
+                # "@urlTaxReductionList": "https://api.fortnox.se/3/taxreductions?filter=invoices&referencenumber=204",
+                "Address1": WO['billing']['address_1'],
+                "Address2": WO['billing']['address_2'],
+                # "AdministrationFee": "0,00",
+                # "AdministrationFeeVAT": 0,
+                "Balance": 1988,
+                # "BasisTaxReduction": 0,
+                # "Booked": false,
+                "Cancelled": False,
+                "City": WO['billing']['city'],
+                # "Comments": "",
+                # "ContractReference": 0,
+                # "ContributionPercent": 37.740000000000002,
+                # "ContributionValue": 600,
+                # "CostCenter": "",
+                "Country": WO['billing']['country'],
+                # "Credit": "false",
+                # "CreditInvoiceReference": 0,
+                "Currency": WO['currency'],
+                # "CurrencyRate": 1,
+                # "CurrencyUnit": 1,
+                "CustomerName": WO['billing']['first_name'] + WO['Billing']['last_name'],
+                "CustomerNumber": WO['customer_id'],
+                "DeliveryAddress1": WO['shipping']['address_1'],
+                "DeliveryAddress2": WO['shipping']['address_2'],
+                "DeliveryCity": WO['shipping']['city'],
+                "DeliveryCountry": WO['shipping']['country'],
+                # "DeliveryDate": null,
+                # "DeliveryName": "",
+                "DeliveryZipCode": WO['shipping']['postcode'],
+                # "DocumentNumber": "204",
+                # "DueDate": "2015-02-11",
+                # "EDIInformation": {
+                #     "EDIGlobalLocationNumber": "",
+                #     "EDIGlobalLocationNumberDelivery": "",
+                #     "EDIInvoiceExtra1": "",
+                #     "EDIInvoiceExtra2": "",
+                #     "EDIOurElectronicReference": "",
+                #     "EDIYourElectronicReference": ""
+                # },
+                # "EUQuarterlyReport": false,
+                # "EmailInformation": {
+                #     "EmailAddressBCC": null,
+                #     "EmailAddressCC": null,
+                #     "EmailAddressFrom": null,
+                #     "EmailAddressTo": "",
+                #     "EmailBody": "Faktura nummer {no} bifogas ",
+                #     "EmailSubject": "Detta \u00e4r din faktura"
+                # },
+                # "ExternalInvoiceReference1": "",
+                # "ExternalInvoiceReference2": "",
+                # "Freight": "0,00",
+                # "FreightVAT": 0,
+                # "Gross": 1590,
+                # "HouseWork": false,
+                "InvoiceDate": WO['date_created'],
+                # "InvoicePeriodEnd": "",
+                # "InvoicePeriodStart": "",
+                # "InvoiceReference": 0,
+                "InvoiceRows": row_items,
+                "InvoiceType": "INVOICE",
+                # "Labels": [
+                #     {
+                #         "Id": 5
+                #     },
+                #     {
+                #         "Id": 11
+                #     }
+                # ],
+                # "Language": "SV",
+                # "LastRemindDate": null,
+                # "Net": 1590,
+                # "NotCompleted": false,
+                # "OCR": "20453",
+                # "OfferReference": 0,
+                # "OrderReference": 0,
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "PaymentWay": "",
+                "Phone1": WO['billing']['phone'],
+                # "Phone2": "",
+                # "PriceList": "A",
+                # "PrintTemplate": "st",
+                # "Project": 0,
+                # "Remarks": "",
+                # "Reminders": 0,
+                # "RoundOff": 0.5,
+                # "Sent": false,
+                # "TaxReduction": null,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "30",
+                "Total": WO['total'],
+                # "TotalToPay": 1988,
+                # "TotalVAT": 397.5,
+                # "VATIncluded": false,
+                # "VoucherNumber": null,
+                # "VoucherSeries": null,
+                # "VoucherYear": null,
+                # "WayOfDelivery": "",
+                # "YourOrderNumber": "",
+                # "YourReference": "",
+                # "ZipCode": "385 31"
+            }
+        }
+
+        return json.dumps(fn_invoice)
+    
+    def fn_invoice_payment_obj(self, WO):
+
+        fn_invoice_payment = {
+            "InvoicePayment": {
+                # "@url": "https://api.fortnox.se/3/invoicepayments/1",
+                "Amount": WO['total'],
+                "AmountCurrency": WO['total'],
+                # "Booked": true,
+                "Currency": WO['currency'],
+                # "CurrencyRate": 1,
+                # "CurrencyUnit": 1,
+                # "ExternalInvoiceReference1": ,
+                # "ExternalInvoiceReference2": "",
+                "InvoiceCustomerName": WO['billing']['first_name'] + WO['billing']['last_name'],
+                "InvoiceCustomerNumber": WO['customer_id'],
+                "InvoiceNumber": WO['id'],
+                # "InvoiceDueDate": WO[''],
+                # "InvoiceOCR": "133",
+                "InvoiceTotal": WO['total'],
+                # "ModeOfPayment": WO['payment_method'],
+                # "ModeOfPaymentAccount": 1930,
+                # "Number": "2",
+                "PaymentDate": WO['date_paid'],
+                # "VoucherNumber": "1",
+                # "VoucherSeries": "C",
+                # "VoucherYear": "2",
+                # "Source": "direct",
+                # "WriteOffs": []
+            }
+        }
+
+        return json.dumps(fn_invoice_payment)
+
+    def fn_invoice_payment_obj_u(self, WO):
+
+        fn_invoice_payment = {
+            "InvoicePayment": {
+                # "@url": "https://api.fortnox.se/3/invoicepayments/1",
+                "Amount": WO['total'],
+                "AmountCurrency": WO['total'],
+                # "Booked": true,
+                "Currency": WO['currency'],
+                # "CurrencyRate": 1,
+                # "CurrencyUnit": 1,
+                # "ExternalInvoiceReference1": ,
+                # "ExternalInvoiceReference2": "",
+                "InvoiceCustomerName": WO['billing']['first_name'] + WO['billing']['last_name'],
+                "InvoiceCustomerNumber": WO['customer_id'],
+                # "InvoiceNumber": WO['id'],
+                # "InvoiceDueDate": WO[''],
+                # "InvoiceOCR": "133",
+                "InvoiceTotal": WO['total'],
+                # "ModeOfPayment": WO['payment_method'],
+                # "ModeOfPaymentAccount": 1930,
+                # "Number": "2",
+                "PaymentDate": WO['date_paid'],
+                # "VoucherNumber": "1",
+                # "VoucherSeries": "C",
+                # "VoucherYear": "2",
+                # "Source": "direct",
+                # "WriteOffs": []
+            }
+        }
+
+        return json.dumps(fn_invoice_payment)
+
     def sync_orders(self):
+        # client_secret, access_token = self.fortnox_authentication()
+
+        client_secret = 'Pmw91MFrEm' 
+        access_token = 'c40acba2-3eb9-4d84-9bea-497ea5959542'
+
+        fn_invoice = fn_invoice_api(access_token, client_secret)
+        fn_invoice_payment = fn_invoice_payment_api(access_token, client_secret)
+
+
         r = self.wcapi.get("orders")
         orders = r.json()
         print ('In sync_orders')
@@ -327,6 +677,17 @@ class woo_fn_sync:
                         local_p.date_completed = WO['date_completed']
 
                         local_p.save()
+
+                        # Fortnox API Update
+                        if WO['status'] != "completed" : 
+                            result  = fn_invoice.fn_update_invoice(WO['id'], self.fn_invoice_obj_u(WO))
+                            print('Invoice Updated:')
+                            print(result)
+                        else:
+                            result  = fn_invoice_payment.fn_update_invoice_payment(WO['id'], self.fn_invoice_payment_obj_u(WO))
+                            print('Invoice payment Updated:')
+                            print(result)
+
                 else: # Does not exist in local, but exist in woocomerce
                      new_order = WooOrder.objects.create(
                         order_id = WO['id'],
@@ -354,10 +715,27 @@ class woo_fn_sync:
                         date_paid = WO['date_paid'],
                         date_completed = WO['date_completed'])
 
+                        # Fortnox API Update
+                        if WO['status'] != "completed" : 
+                            result  = fn_invoice.fn_create_invoice(self.fn_invoice_obj(WO))
+                            print('Invoice created:')
+                            print(result)
+                        else:
+                            result  = fn_invoice_payment.fn_create_invoice_payment(self.fn_invoice_obj(WO))
+                            print('Invoice payment created:')
+                            print(result)
             
             for lp in local_ids:
                 if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                    result = WooOrder.objects.get(order_id=local_ids[lp]['id'])
+                    
+                    # result1 = fn_invoice.fn
+                    # # fotnox delete
+                    # if result.status == 'complete' :
+
                     WooOrder.objects.filter(order_id=local_ids[lp]['id']).delete()
+
+
                 
         except DatabaseError as e:
             print('Database error: ' + str(e))

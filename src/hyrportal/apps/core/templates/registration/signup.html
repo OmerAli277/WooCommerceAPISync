@@ -12,7 +12,13 @@
                  </div>
 
               {% csrf_token %}
-                <div class="form-row">
+
+                <div class="form-group">
+                  <label for="CustomerName">Customer Name</label>
+                  <input type="text" class="form-control" name="CustomerName" id="CustomerName" placeholder="Customer Name">
+                </div>
+
+                 <div class="form-row">
                     <div class="form-group col-md-6">
                       <label for="Company_Name">Company Name</label>
                       <input type="text" class="form-control" name="Company_Name" id="Company_Name" placeholder="Company Name">
@@ -27,10 +33,9 @@
                       <label for="Customer_Number">Customer Number</label>
                       <input type="text" class="form-control" name="Customer_Number" id="Customer_Number" placeholder="Customer Number">
                     </div>
-
                       <div class="form-group col-md-6">
-                      <label for="Customer_Name">Customer Name</label>
-                      <input type="text" class="form-control" name="Customer_Name" id="Customer_Name" placeholder="Customer Name">
+                      <label for="User_Name">User Name</label>
+                      <input type="text" class="form-control" name="User_Name" id="User_Name" placeholder="UserName">
                     </div>
 
 

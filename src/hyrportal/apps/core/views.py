@@ -24,9 +24,9 @@ from django.contrib.auth.models import auth
 from .woo_task import woo_fn_sync
 
 wp = woo_fn_sync("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
-wp.sync_products()
-wp.sync_customers()
-wp.sync_orders()
+# wp.sync_products()
+# wp.sync_customers()
+# wp.sync_orders()
 
 # class UsersViewSet(generics.ListCreateAPIView):
 
@@ -121,8 +121,8 @@ def signup(request):
         print(companyName )
         comapanyVat = request.POST.get('Company_Vat')
         print(comapanyVat)
-        customerName = request.POST.get('Customer_Name')
-        print(customerName)
+        user_name = request.POST.get('User_Name')
+        print(user_name)
         customerNum = request.POST.get('Customer_Number')
         print(customerNum)
         accountType = request.POST.get('Company_Vat')
@@ -141,13 +141,17 @@ def signup(request):
         print(zipCode)
         BoxChecked = request.POST.get('gridCheck')
         print(BoxChecked)
+        CustomerName = request.POST.get('CustomerName')
+        print(CustomerName)
 
         if password2 == password1:
-            user = User.objects.create_user(username=customerName, email=email ,password=password1 , company_name=companyName,
-                                            address=Address, city=city, zip_code=zipCode, customer_no=customerNum)
+            user = User.objects.create_user(username=user_name, email=email ,password=password1 , company_name=companyName,
+                                            address=Address, city=city, zip_code=zipCode, customer_name = CustomerName,
+                                            customer_no=customerNum )
+
             user.save()
             print('user Created')
-            return render(request, 'registration/login.html')
+            return redirect('/')
         else:
             print('Password not matched.')
             message = 'Password not matched!'
@@ -262,7 +266,13 @@ class SettingsView(UpdateView):
 class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'user/list.html'
 
+    # def head(self):
+    #     customer = User.first_name + ' ' + User.last_name
+    #     print(customer)
+
     def get_context_data(self, **kwargs):
+        print ('get_context_data ')
+        model = User
         sellers = list(User.objects.all().filter(is_seller=True))
         return dict(
             sellers=[
@@ -280,7 +290,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
 class UserCreateView(LoginRequiredMixin, CreateView):
     # template_name = 'user/create.html'
     template_name = 'registration/signup.html'
-    model = User
+
     fields = [
         'customer_no',
         'customer_name',

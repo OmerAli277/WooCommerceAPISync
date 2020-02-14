@@ -17,30 +17,40 @@ class woo_fn_sync:
             timeout = 30
         )
 
-    def fortnox_authentication(self, seller_id):
+    def fortnox_authentication(self, seller_id1):
         client_secret = None
         access_token = None
-        # if value exist in database=>fortnoxApiDetails:
-        #     Use it
-        # else:
-        #     data = None
-        #     # Database call for authentication and secret
-        #     try:
-        #         r = requests.get(
-        #             url="https://api.fortnox.se/3/invoices",
-        #             headers = {
-        #                 "Authorization-Code": self.Access_Token,
-        #                 "Client-Secret":self.Client_Secret,
-        #                 "Content-Type":"application/json",
-        #                 "Accept":"application/json",
-        #             },
-        #         )
-        #         print('Response HTTP Status Code : {status_code}'.format(status_code=r.status_code))
-        #         # print('Response HTTP Response Body : {content}'.format(content=r.content))
-        #         data = json.loads(r.content)
-        #         access_token = data['access-token']
-        #     except requests.exceptions.RequestException as e:
-        #         print('fn_authentication HTTP Request failed')
+        fn_object = None
+        try:
+            fn_object = fortnoxApiDetails.objects.get(seller_id=seller_id1)
+        except DatabaseError as e:
+            print('Database fortnoxApiDetails error: '+ str(e))
+
+        if fn_object.access_token != None  value exist in database=>fortnoxApiDetails:
+            # fortnoxApiDetails ... Use It
+            client_secret = fn_object.client_secret
+            access_token = fn_object.access_token
+        else:
+            data = None
+            # Database call for authentication and secret
+            try:
+                r = requests.get(
+                    url="https://api.fortnox.se/3/invoices",
+                    headers = {
+                        "Authorization-Code": self.Access_Token,
+                        "Client-Secret":self.Client_Secret,
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                    },
+                )
+                print('Response HTTP Status Code : {status_code}'.format(status_code=r.status_code))
+                # print('Response HTTP Response Body : {content}'.format(content=r.content))
+                data = json.loads(r.content)
+                access_token = data['Authorization']['AccessToken']
+                client_secret = fn_object.client_secret
+            except requests.exceptions.RequestException as e:
+                print('fn_authentication HTTP Request failed')
+
         return client_secret, access_token
     
     # Article
@@ -285,7 +295,6 @@ class woo_fn_sync:
     
 
     # Order and Fortnox Invoice
-
     def fn_invoice_obj(self, WO):
 
         row_items = []

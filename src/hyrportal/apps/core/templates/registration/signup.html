@@ -2,6 +2,9 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block body %}
+
+
+{% if request.user.is_superuser %}
 <div class="container">
     <div class="row">
         <div class="col-sm-6">
@@ -101,5 +104,9 @@
         </div>
     </div>
 </div>
+
+{% else %}
+    <h1>Unauthorised Access Denied</h1>
+{% endif %}
 
 {% endblock %}

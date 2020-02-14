@@ -24,9 +24,9 @@ from django.contrib.auth.models import auth
 from .woo_task import woo_fn_sync
 
 wp = woo_fn_sync("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
-# wp.sync_products()
-# wp.sync_orders()
-# wp.sync_customers()
+wp.sync_products()
+wp.sync_customers()
+wp.sync_orders()
 
 # class UsersViewSet(generics.ListCreateAPIView):
 

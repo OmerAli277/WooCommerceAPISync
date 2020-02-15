@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.http import HttpResponse
 
+from hyrportal import settings
 from .models import WooCustomer, WooOrder, WooProduct, User
 import json
 from django.shortcuts import redirect
@@ -203,39 +204,39 @@ class LogoutView(View):
 
     def get(self, request,  *args, **kwargs):
         print('In LogOut')
-        logout(request)
         del request.session['is_login']
+        logout(request)
         return redirect('/')
 
 
-# @login_required(login_url='/accounts/login/')
+
 def home_page(request):
-    # is_login = 'false'
-    # try:
-    #     is_login = request.session['is_login']
-    # except KeyError:
-    #     print('KeyError')
     print("home_page")
     is_login = request.session.get('is_login' , 'false')
     print('session value ' + request.session.get('is_login' , 'false'))
-    # if is_login == 'false':
-    #     print('not_login')
-    #     return render(request, 'registration/login.html')
-    # else:
-    if request.user.is_superuser:
-        print('superuser_login')
-        return render(request, 'user/settings.html')
+    if is_login == 'false':
+        print('not_login')
+        # return render(request, 'registration/login.html')
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     else:
-        print('customer_login')
-        return render(request, 'customer/settings.html')
+        if request.user.is_superuser:
+            print('superuser_login')
+            return render(request, 'user/settings.html')
+        else:
+            print('customer_login')
+            return render(request, 'customer/settings.html')
 
 
+
+def cus(self):
+   return render(request, 'customer/settings.html')
 
 class SettingsView(UpdateView):
-
     template_name = 'settings.html'
     model = User
     fields = '__all__'
+
+
 
     # success_url = reverse_lazy('settings')
 

@@ -24,18 +24,23 @@ urlpatterns = [
 	# path('token/', GetToken.as_view()),
 	# path('users/', UsersViewSet.as_view()),
 	# path('users/<int:pk>/', GetUserView.as_view()),
-	path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
+	# path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
 	path('accounts/logout/', views.LogoutView.as_view(), name='logout'),
 
 	path('accounts/', include('django.contrib.auth.urls')),
 	path('signup/', views.signup, name='signup'),
-	path('login/request/', views.request, name='request'),
+    path('accounts/login/request/', views.request, name='request'),
+	# path('login/request/', views.request, name='request'),
 	# path('', RedirectView.as_view(pattern_name='settings', permanent=False)),
 
 	path('', views.home_page , name='home_page'),
     path('connect/', views.connect, name='connect'),
 	path('settings/', views.SettingsView.as_view(), name='settings'),
-	path('users/', views.UserListView.as_view(), name='user-list'),
+
+	path('customer-settings/', views.cus, name = "customer-settings"),
+
+    path('users/', views.UserListView.as_view(), name='user-list'),
+
 	path('user/add/', views.UserCreateView.as_view(), name='user-create'),
 	path('user/<int:pk>/edit/', views.UserEditView.as_view(), name='user-edit'),
 	path('user/<int:pk>/delete/', views.UserDeleteView.as_view(), name='user-delete'),

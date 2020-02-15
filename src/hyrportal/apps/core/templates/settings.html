@@ -9,16 +9,22 @@
             <div class="card-header">
                 <h5>Settings</h5>
             </div>
-            <div class="card-block">
-                <form method="post">
-                    {% csrf_token %}
 
-                    {{ form.as_p }}
 
-                    <button type="submit">Save</button>
-                </form>
+            {% if request.user.is_superuser %}
+                <div class="card-block">
+                    <form method="post">
+                        <!--{% csrf_token %}-->
 
-            </div>
+                        <!--{{ form.as_p }}-->
+
+                        <button type="submit">Save</button>
+                    </form>
+
+                </div>
+            {% else %}
+                <h1>You are not a super user</h1>
+            {% endif %}
         </div>
     </div>
     <!-- [ sample-page ] end -->

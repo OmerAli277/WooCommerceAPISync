@@ -17,30 +17,40 @@ class woo_fn_sync:
             timeout = 30
         )
 
-    def fortnox_authentication(self, seller_id):
+    def fortnox_authentication(self, seller_id1):
         client_secret = None
         access_token = None
-        # if value exist in database=>fortnoxApiDetails:
-        #     Use it
-        # else:
-        #     data = None
-        #     # Database call for authentication and secret
-        #     try:
-        #         r = requests.get(
-        #             url="https://api.fortnox.se/3/invoices",
-        #             headers = {
-        #                 "Authorization-Code": self.Access_Token,
-        #                 "Client-Secret":self.Client_Secret,
-        #                 "Content-Type":"application/json",
-        #                 "Accept":"application/json",
-        #             },
-        #         )
-        #         print('Response HTTP Status Code : {status_code}'.format(status_code=r.status_code))
-        #         # print('Response HTTP Response Body : {content}'.format(content=r.content))
-        #         data = json.loads(r.content)
-        #         access_token = data['access-token']
-        #     except requests.exceptions.RequestException as e:
-        #         print('fn_authentication HTTP Request failed')
+        fn_object = None
+        try:
+            fn_object = fortnoxApiDetails.objects.get(seller_id=seller_id1)
+        except DatabaseError as e:
+            print('Database fortnoxApiDetails error: '+ str(e))
+
+        if fn_object.access_token != None  value exist in database=>fortnoxApiDetails:
+            # fortnoxApiDetails ... Use It
+            client_secret = fn_object.client_secret
+            access_token = fn_object.access_token
+        else:
+            data = None
+            # Database call for authentication and secret
+            try:
+                r = requests.get(
+                    url="https://api.fortnox.se/3/invoices",
+                    headers = {
+                        "Authorization-Code": self.Access_Token,
+                        "Client-Secret":self.Client_Secret,
+                        "Content-Type":"application/json",
+                        "Accept":"application/json",
+                    },
+                )
+                print('Response HTTP Status Code : {status_code}'.format(status_code=r.status_code))
+                # print('Response HTTP Response Body : {content}'.format(content=r.content))
+                data = json.loads(r.content)
+                access_token = data['Authorization']['AccessToken']
+                client_secret = fn_object.client_secret
+            except requests.exceptions.RequestException as e:
+                print('fn_authentication HTTP Request failed')
+
         return client_secret, access_token
     
     # Article
@@ -52,23 +62,28 @@ class woo_fn_sync:
         fn_article_object = {
             "Article": {
                 # "@url": "https://api.fortnox.se/3/articles/FRPPLUS",
+                # "Active": true,
                 "ArticleNumber": WP['id'],
+                # "Bulky": false,
+                # "ConstructionAccount": 0,
+                # "Depth": 0,
                 "Description": WP['short_description'],
-                "EAN": "",
-                "EUAccount": eu_sales_account,  
-                "EUVATAccount": eu_vat_account,
-                "ExportAccount": non_eu_account,
+                # "DisposableQuantity": 0,
+                # "EAN": "",
+                # "EUAccount": 3018,
+                # "EUVATAccount": 3016,
+                # "ExportAccount": 3015,
                 "Height": WP['dimensions']['height'],
                 # "Housework": false,
                 # "HouseworkType": null,
                 # "Manufacturer": null,
                 # "ManufacturerArticleNumber": "",
                 "Note": WP['description'],
-                # "PurchaseAccount": purchase_account,
+                # "PurchaseAccount": 4011,
                 # "PurchasePrice": 0,
                 "QuantityInStock": WP['stock_quantity'],
                 # "ReservedQuantity": 0,
-                # "SalesAccount": sales_account,
+                # "SalesAccount": 3011,
                 # "StockGoods": false,
                 # "StockPlace": null,
                 # "StockValue": 0,
@@ -77,11 +92,18 @@ class woo_fn_sync:
                 # "SupplierNumber": null,
                 "Type": WP['type'],
                 # "Unit": null,
-                # "VAT": vat_rate,
-                "WebshopArticle": true,
+                # "VAT": 25,
+                # "WebshopArticle": false,
                 "Weight": WP['weight'],
                 "Width": WP['dimensions']['width'],
+                # "Expired": false,
                 "SalesPrice": WP['sale_price'],
+                # "CostCalculationMethod": null,
+                # "StockAccount": null,
+                # "StockChangeAccount": null,
+                # "DirectCost": 0,
+                # "FreightCost": 0,
+                # "OtherCost": 0
             }
         }
 
@@ -96,36 +118,47 @@ class woo_fn_sync:
             "Article": {
                 # "@url": "https://api.fortnox.se/3/articles/FRPPLUS",
                 # "Active": true,
-                "ArticleNumber": WP['id'],
+                # "ArticleNumber": WP['id'],
+                # "Bulky": false,
+                # "ConstructionAccount": 0,
+                # "Depth": 0,
                 "Description": WP['short_description'],
-                #"EAN": "",
-                "EUAccount": eu_sales_account,  
-                "EUVATAccount": eu_vat_account,
-                "ExportAccount": non_eu_account,
-                "Height": WP['dimensions']['height'],
+                # "DisposableQuantity": 0,
+                # "EAN": "",
+                # "EUAccount": 3018,
+                # "EUVATAccount": 3016,
+                # "ExportAccount": 3015,
                 "Height": WP['dimensions']['height'],
                 # "Housework": false,
                 # "HouseworkType": null,
                 # "Manufacturer": null,
                 # "ManufacturerArticleNumber": "",
                 "Note": WP['description'],
-                # "PurchaseAccount": purchase_account,
+                # "PurchaseAccount": 4011,
                 # "PurchasePrice": 0,
                 "QuantityInStock": WP['stock_quantity'],
                 # "ReservedQuantity": 0,
-                # "SalesAccount": sales_account,
+                # "SalesAccount": 3011,
                 # "StockGoods": false,
                 # "StockPlace": null,
                 # "StockValue": 0,
+                # "StockWarning": 0,
                 # "SupplierName": null,
                 # "SupplierNumber": null,
                 "Type": WP['type'],
-                # "VAT": vat_rate,
-                "WebshopArticle": true,
+                # "Unit": null,
+                # "VAT": 25,
+                # "WebshopArticle": false,
                 "Weight": WP['weight'],
                 "Width": WP['dimensions']['width'],
+                # "Expired": false,
                 "SalesPrice": WP['sale_price'],
-               
+                # "CostCalculationMethod": null,
+                # "StockAccount": null,
+                # "StockChangeAccount": null,
+                # "DirectCost": 0,
+                # "FreightCost": 0,
+                # "OtherCost": 0
             }
         }
 
@@ -262,91 +295,17 @@ class woo_fn_sync:
     
 
     # Order and Fortnox Invoice
-
     def fn_invoice_obj(self, WO):
 
         row_items = []
         for item in  WO['line_items']:
             row_items.push({
                 {
-                    "AccountNumber": sales_account,
+                    # "AccountNumber": 3011,
                     "ArticleNumber": item['product_id'],
-                    "DeliveredQuantity": item['quantity'],
-                    "Description": "USB-minne 32GB",
-                    # "Discount": 0,
-                    # "DiscountType": "PERCENT",
-                    # "HouseWork": false,
-                    # "HouseWorkHoursToReport": null,
-                    # "HouseWorkType": null,
-                    "Price": item['price'],
-                    # "Project": 0,
-                    "Total": item['total'],
-                    # "Unit": "st",
-                     "VAT": vat_rate,
-                }
-            })
-
-
-        fn_invoice = {
-            "Invoice": {
-                # "@url": "https://api.fortnox.se/3/invoices/204",
-                # "@urlTaxReductionList": "https://api.fortnox.se/3/taxreductions?filter=invoices&referencenumber=204",
-                "Address1": WO['billing']['address_1'],
-                "Address2": WO['billing']['address_2'],
-                "City": WO['billing']['city'],
-                "Comments": "",
-                "Country": WO['billing']['country'],
-                # "Credit": "false",  if amount is negative, value is true
-                "Currency": WO['currency'],
-                # "CurrencyRate": 1,
-                # "CurrencyUnit": 1,
-                "CustomerName": WO['billing']['first_name'] + WO['Billing']['last_name'],
-                "CustomerNumber": WO['customer_id'],
-                "DeliveryAddress1": WO['shipping']['address_1'],
-                "DeliveryAddress2": WO['shipping']['address_2'],
-                "DeliveryCity": WO['shipping']['city'],
-                "DeliveryCountry": WO['shipping']['country'],
-                "DeliveryZipCode": WO['shipping']['postcode'],
-                "DocumentNumber": WO['id'],
-                "ExternalInvoiceReference1": "",
-                "ExternalInvoiceReference2": "",
-                "Freight": "",
-                "InvoiceDate": WO['date_created'],
-                "InvoiceRows": row_items,
-                "InvoiceType": "INVOICE",
-                # "Labels": [
-                #     {
-                #         "Id": 5
-                #     },
-                #     {
-                #         "Id": 11
-                #     }
-                # ],
-                # "Net": 1590,
-                # "OrderReference": 0,
-                # "OrganisationNumber": "",
-                # "OurReference": "",
-                "Phone1": WO['billing']['phone'],
-                # "Project": 0,
-                # "TermsOfPayment": "30",
-                "Total": WO['total'],
-                # "TotalToPay": 1988,
-                # "TotalVAT": 397.5,
-                # "VATIncluded": false,
-                "YourOrderNumber": WO['id'],
-            }
-        }
-
-        return json.dumps(fn_invoice)
-    
-    def fn_invoice_obj_u(self, WO):
-
-        row_items = []
-        for item in  WO['line_items']:
-            row_items.push({
-                {
-                    "AccountNumber": sales_account,
-                    "ArticleNumber": item['product_id'],
+                    # "ContributionPercent": 37.740000000000002,
+                    # "ContributionValue": 600,
+                    # "CostCenter": "",
                     "DeliveredQuantity": item['quantity'],
                     # "Description": "USB-minne 32GB",
                     # "Discount": 0,
@@ -369,13 +328,21 @@ class woo_fn_sync:
                 # "@urlTaxReductionList": "https://api.fortnox.se/3/taxreductions?filter=invoices&referencenumber=204",
                 "Address1": WO['billing']['address_1'],
                 "Address2": WO['billing']['address_2'],
+                # "AdministrationFee": "0,00",
+                # "AdministrationFeeVAT": 0,
                 "Balance": 1988,
+                # "BasisTaxReduction": 0,
+                # "Booked": false,
                 "Cancelled": False,
                 "City": WO['billing']['city'],
                 # "Comments": "",
+                # "ContractReference": 0,
+                # "ContributionPercent": 37.740000000000002,
+                # "ContributionValue": 600,
                 # "CostCenter": "",
                 "Country": WO['billing']['country'],
                 # "Credit": "false",
+                # "CreditInvoiceReference": 0,
                 "Currency": WO['currency'],
                 # "CurrencyRate": 1,
                 # "CurrencyUnit": 1,
@@ -388,22 +355,215 @@ class woo_fn_sync:
                 # "DeliveryDate": null,
                 # "DeliveryName": "",
                 "DeliveryZipCode": WO['shipping']['postcode'],
+                "DocumentNumber": WO['id'],
+                # "DueDate": "2015-02-11",
+                # "EDIInformation": {
+                #     "EDIGlobalLocationNumber": "",
+                #     "EDIGlobalLocationNumberDelivery": "",
+                #     "EDIInvoiceExtra1": "",
+                #     "EDIInvoiceExtra2": "",
+                #     "EDIOurElectronicReference": "",
+                #     "EDIYourElectronicReference": ""
+                # },
+                # "EUQuarterlyReport": false,
+                # "EmailInformation": {
+                #     "EmailAddressBCC": null,
+                #     "EmailAddressCC": null,
+                #     "EmailAddressFrom": null,
+                #     "EmailAddressTo": "",
+                #     "EmailBody": "Faktura nummer {no} bifogas ",
+                #     "EmailSubject": "Detta \u00e4r din faktura"
+                # },
                 # "ExternalInvoiceReference1": "",
                 # "ExternalInvoiceReference2": "",
                 # "Freight": "0,00",
+                # "FreightVAT": 0,
+                # "Gross": 1590,
                 # "HouseWork": false,
                 "InvoiceDate": WO['date_created'],
+                # "InvoicePeriodEnd": "",
+                # "InvoicePeriodStart": "",
+                # "InvoiceReference": 0,
                 "InvoiceRows": row_items,
                 "InvoiceType": "INVOICE",
+                # "Labels": [
+                #     {
+                #         "Id": 5
+                #     },
+                #     {
+                #         "Id": 11
+                #     }
+                # ],
+                # "Language": "SV",
+                # "LastRemindDate": null,
                 # "Net": 1590,
+                # "NotCompleted": false,
+                # "OCR": "20453",
+                # "OfferReference": 0,
                 # "OrderReference": 0,
                 # "OrganisationNumber": "",
                 # "OurReference": "",
+                # "PaymentWay": "",
                 "Phone1": WO['billing']['phone'],
+                # "Phone2": "",
+                # "PriceList": "A",
+                # "PrintTemplate": "st",
                 # "Project": 0,
+                # "Remarks": "",
+                # "Reminders": 0,
+                # "RoundOff": 0.5,
+                # "Sent": false,
+                # "TaxReduction": null,
+                # "TermsOfDelivery": "",
                 # "TermsOfPayment": "30",
                 "Total": WO['total'],
+                # "TotalToPay": 1988,
+                # "TotalVAT": 397.5,
                 # "VATIncluded": false,
+                # "VoucherNumber": null,
+                # "VoucherSeries": null,
+                # "VoucherYear": null,
+                # "WayOfDelivery": "",
+                "YourOrderNumber": WO['id'],
+                # "YourReference": "",
+                # "ZipCode": "385 31"
+            }
+        }
+
+        return json.dumps(fn_invoice)
+    
+    def fn_invoice_obj_u(self, WO):
+
+        row_items = []
+        for item in  WO['line_items']:
+            row_items.push({
+                {
+                    # "AccountNumber": 3011,
+                    "ArticleNumber": item['product_id'],
+                    # "ContributionPercent": 37.740000000000002,
+                    # "ContributionValue": 600,
+                    # "CostCenter": "",
+                    "DeliveredQuantity": item['quantity'],
+                    # "Description": "USB-minne 32GB",
+                    # "Discount": 0,
+                    # "DiscountType": "PERCENT",
+                    # "HouseWork": false,
+                    # "HouseWorkHoursToReport": null,
+                    # "HouseWorkType": null,
+                    "Price": item['price'],
+                    # "Project": 0,
+                    "Total": item['total'],
+                    # "Unit": "st",
+                    # "VAT": 25
+                }
+            })
+
+
+        fn_invoice = {
+            "Invoice": {
+                # "@url": "https://api.fortnox.se/3/invoices/204",
+                # "@urlTaxReductionList": "https://api.fortnox.se/3/taxreductions?filter=invoices&referencenumber=204",
+                "Address1": WO['billing']['address_1'],
+                "Address2": WO['billing']['address_2'],
+                # "AdministrationFee": "0,00",
+                # "AdministrationFeeVAT": 0,
+                "Balance": 1988,
+                # "BasisTaxReduction": 0,
+                # "Booked": false,
+                "Cancelled": False,
+                "City": WO['billing']['city'],
+                # "Comments": "",
+                # "ContractReference": 0,
+                # "ContributionPercent": 37.740000000000002,
+                # "ContributionValue": 600,
+                # "CostCenter": "",
+                "Country": WO['billing']['country'],
+                # "Credit": "false",
+                # "CreditInvoiceReference": 0,
+                "Currency": WO['currency'],
+                # "CurrencyRate": 1,
+                # "CurrencyUnit": 1,
+                "CustomerName": WO['billing']['first_name'] + WO['Billing']['last_name'],
+                "CustomerNumber": WO['customer_id'],
+                "DeliveryAddress1": WO['shipping']['address_1'],
+                "DeliveryAddress2": WO['shipping']['address_2'],
+                "DeliveryCity": WO['shipping']['city'],
+                "DeliveryCountry": WO['shipping']['country'],
+                # "DeliveryDate": null,
+                # "DeliveryName": "",
+                "DeliveryZipCode": WO['shipping']['postcode'],
+                # "DocumentNumber": "204",
+                # "DueDate": "2015-02-11",
+                # "EDIInformation": {
+                #     "EDIGlobalLocationNumber": "",
+                #     "EDIGlobalLocationNumberDelivery": "",
+                #     "EDIInvoiceExtra1": "",
+                #     "EDIInvoiceExtra2": "",
+                #     "EDIOurElectronicReference": "",
+                #     "EDIYourElectronicReference": ""
+                # },
+                # "EUQuarterlyReport": false,
+                # "EmailInformation": {
+                #     "EmailAddressBCC": null,
+                #     "EmailAddressCC": null,
+                #     "EmailAddressFrom": null,
+                #     "EmailAddressTo": "",
+                #     "EmailBody": "Faktura nummer {no} bifogas ",
+                #     "EmailSubject": "Detta \u00e4r din faktura"
+                # },
+                # "ExternalInvoiceReference1": "",
+                # "ExternalInvoiceReference2": "",
+                # "Freight": "0,00",
+                # "FreightVAT": 0,
+                # "Gross": 1590,
+                # "HouseWork": false,
+                "InvoiceDate": WO['date_created'],
+                # "InvoicePeriodEnd": "",
+                # "InvoicePeriodStart": "",
+                # "InvoiceReference": 0,
+                "InvoiceRows": row_items,
+                "InvoiceType": "INVOICE",
+                # "Labels": [
+                #     {
+                #         "Id": 5
+                #     },
+                #     {
+                #         "Id": 11
+                #     }
+                # ],
+                # "Language": "SV",
+                # "LastRemindDate": null,
+                # "Net": 1590,
+                # "NotCompleted": false,
+                # "OCR": "20453",
+                # "OfferReference": 0,
+                # "OrderReference": 0,
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "PaymentWay": "",
+                "Phone1": WO['billing']['phone'],
+                # "Phone2": "",
+                # "PriceList": "A",
+                # "PrintTemplate": "st",
+                # "Project": 0,
+                # "Remarks": "",
+                # "Reminders": 0,
+                # "RoundOff": 0.5,
+                # "Sent": false,
+                # "TaxReduction": null,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "30",
+                "Total": WO['total'],
+                # "TotalToPay": 1988,
+                # "TotalVAT": 397.5,
+                # "VATIncluded": false,
+                # "VoucherNumber": null,
+                # "VoucherSeries": null,
+                # "VoucherYear": null,
+                # "WayOfDelivery": "",
+                # "YourOrderNumber": "",
+                # "YourReference": "",
+                # "ZipCode": "385 31"
             }
         }
 
@@ -416,18 +576,26 @@ class woo_fn_sync:
                 # "@url": "https://api.fortnox.se/3/invoicepayments/1",
                 "Amount": WO['total'],
                 "AmountCurrency": WO['total'],
+                # "Booked": true,
                 "Currency": WO['currency'],
                 # "CurrencyRate": 1,
                 # "CurrencyUnit": 1,
+                # "ExternalInvoiceReference1": ,
                 # "ExternalInvoiceReference2": "",
                 "InvoiceCustomerName": WO['billing']['first_name'] + WO['billing']['last_name'],
                 "InvoiceCustomerNumber": WO['customer_id'],
                 "InvoiceNumber": WO['id'],
+                # "InvoiceDueDate": WO[''],
+                # "InvoiceOCR": "133",
                 "InvoiceTotal": WO['total'],
                 # "ModeOfPayment": WO['payment_method'],
-                 "ModeOfPaymentAccount": payout_account,
+                # "ModeOfPaymentAccount": 1930,
                 # "Number": "2",
                 "PaymentDate": WO['date_paid'],
+                # "VoucherNumber": "1",
+                # "VoucherSeries": "C",
+                # "VoucherYear": "2",
+                # "Source": "direct",
                 # "WriteOffs": []
             }
         }
@@ -441,17 +609,26 @@ class woo_fn_sync:
                 # "@url": "https://api.fortnox.se/3/invoicepayments/1",
                 "Amount": WO['total'],
                 "AmountCurrency": WO['total'],
+                # "Booked": true,
                 "Currency": WO['currency'],
                 # "CurrencyRate": 1,
                 # "CurrencyUnit": 1,
+                # "ExternalInvoiceReference1": ,
+                # "ExternalInvoiceReference2": "",
                 "InvoiceCustomerName": WO['billing']['first_name'] + WO['billing']['last_name'],
                 "InvoiceCustomerNumber": WO['customer_id'],
-                "InvoiceNumber": "", #fortnox invoice numer
+                # "InvoiceNumber": WO['id'],
+                # "InvoiceDueDate": WO[''],
+                # "InvoiceOCR": "133",
                 "InvoiceTotal": WO['total'],
                 # "ModeOfPayment": WO['payment_method'],
-                "ModeOfPaymentAccount": payout_account,
+                # "ModeOfPaymentAccount": 1930,
                 # "Number": "2",
                 "PaymentDate": WO['date_paid'],
+                # "VoucherNumber": "1",
+                # "VoucherSeries": "C",
+                # "VoucherYear": "2",
+                # "Source": "direct",
                 # "WriteOffs": []
             }
         }
@@ -593,11 +770,49 @@ class woo_fn_sync:
                 "DeliveryCity": WC['shipping']['city'],
                 "DeliveryCountry": WC['shipping']['country'],
                 "DeliveryCountryCode": WC['shipping']['postcode'],
+                # "DeliveryFax": WC[''],
                 "DeliveryName": WC['billing']['first_name'],
                 "DeliveryPhone1": WC['billing']['phone'],
+                # "DeliveryPhone2": WC[''],
+                # "DeliveryZipCode": WC[''],
                 "Email": WC['billing']['email'],
+                # "EmailInvoice": "",
+                # "EmailInvoiceBCC": "",
+                # "EmailInvoiceCC": "",
+                # "EmailOffer": "",
+                # "EmailOfferBCC": "",
+                # "EmailOfferCC": "",
+                # "EmailOrder": "",
+                # "EmailOrderBCC": "",
+                # "EmailOrderCC": "",
+                # "Fax": null,
+                # "InvoiceAdministrationFee": null,
+                # "InvoiceDiscount": null,
+                # "InvoiceFreight": null,
+                # "InvoiceRemark": "",
                 "Name": fn_name,
-                "OrganisationNumber": "company_vat_id",
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "Phone1": null,
+                # "Phone2": null,
+                # "PriceList": "A",
+                # "Project": null,
+                # "SalesAccount": null,
+                # "ShowPriceVATIncluded": false,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "",
+                # "Type": "COMPANY",
+                # "VATNumber": "",
+                # "VATType": "SEVAT",
+                # "VisitingAddress": null,
+                # "VisitingCity": null,
+                # "VisitingCountry": null,
+                # "VisitingCountryCode": null,
+                # "VisitingZipCode": null,
+                # "WWW": "",
+                # "WayOfDelivery": "",
+                # "YourReference": "",
+                # "ZipCode": null
             }
         }
         
@@ -623,11 +838,49 @@ class woo_fn_sync:
                 "DeliveryCity": WC['shipping']['city'],
                 "DeliveryCountry": WC['shipping']['country'],
                 "DeliveryCountryCode": WC['shipping']['postcode'],
+                # "DeliveryFax": WC[''],
                 "DeliveryName": WC['billing']['first_name'],
                 "DeliveryPhone1": WC['billing']['phone'],
+                # "DeliveryPhone2": WC[''],
+                # "DeliveryZipCode": WC[''],
                 "Email": WC['billing']['email'],
+                # "EmailInvoice": "",
+                # "EmailInvoiceBCC": "",
+                # "EmailInvoiceCC": "",
+                # "EmailOffer": "",
+                # "EmailOfferBCC": "",
+                # "EmailOfferCC": "",
+                # "EmailOrder": "",
+                # "EmailOrderBCC": "",
+                # "EmailOrderCC": "",
+                # "Fax": null,
+                # "InvoiceAdministrationFee": null,
+                # "InvoiceDiscount": null,
+                # "InvoiceFreight": null,
+                # "InvoiceRemark": "",
                 "Name": fn_name,
-                "OrganisationNumber": "company_vat_id",
+                # "OrganisationNumber": "",
+                # "OurReference": "",
+                # "Phone1": null,
+                # "Phone2": null,
+                # "PriceList": "A",
+                # "Project": null,
+                # "SalesAccount": null,
+                # "ShowPriceVATIncluded": false,
+                # "TermsOfDelivery": "",
+                # "TermsOfPayment": "",
+                # "Type": "COMPANY",
+                # "VATNumber": "",
+                # "VATType": "SEVAT",
+                # "VisitingAddress": null,
+                # "VisitingCity": null,
+                # "VisitingCountry": null,
+                # "VisitingCountryCode": null,
+                # "VisitingZipCode": null,
+                # "WWW": "",
+                # "WayOfDelivery": "",
+                # "YourReference": "",
+                # "ZipCode": null
             }
         }
         

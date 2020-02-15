@@ -99,6 +99,10 @@ class WooOrder(models.Model):
     payment_method_title = models.CharField(max_length=255, null=True, blank=True)
     transaction_id = models.CharField(max_length=255, null=True, blank=True)
 
+    # customer_id = models.IntegerField(null=True, blank=True)    #new entity added in DB
+    customer_ip_address = models.CharField(max_length=255, null=True, blank=True)
+    customer_note = models.CharField(max_length=255, null=True, blank=True)
+
     # billing = models.ForeignKey(to='WooBilling', blank=True, null=True, on_delete=models.SET_NULL)
     # shipping = models.ForeignKey(to='WooShippment', blank=True, null=True, on_delete=models.SET_NULL)
 
@@ -107,6 +111,33 @@ class WooOrder(models.Model):
     date_paid = models.DateTimeField(null=True, blank=True)
     date_completed = models.DateTimeField(null=True, blank=True)
    
+
+
+
+class WooOrderItem(models.Model):
+    order = models.ForeignKey(to='WooOrder', related_name='woo_orderitems', on_delete=models.CASCADE)
+    # subscription = models.ForeignKey(to=WooSubscription, null=True, blank=True, on_delete=models.SET_NULL)
+    orderitem_id = models.IntegerField(null=True, blank=True, unique=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    sku = models.CharField(max_length=255, null=True, blank=True)
+    tax_class = models.CharField(max_length=255, null=True, blank=True)
+    quantity = models.IntegerField(null=True, blank=True)
+    price = models.FloatField(null=True, blank=True, default=0)
+    subtotal = models.FloatField(null=True, blank=True, default=0)
+    subtotal_tax = models.FloatField(null=True, blank=True, default=0)
+    total = models.FloatField(null=True, blank=True, default=0)
+    total_tax = models.FloatField(null=True, blank=True, default=0)
+
+
+    # order_id = models.IntegerField(null=True, blank=True, unique=True)
+    id_order = models.IntegerField(null=True, blank=True)
+
+    product = models.ForeignKey(to='WooProduct', null=True, blank=True, on_delete=models.SET_NULL)
+    variant = models.ForeignKey(to='WooVariant', null=True, blank=True, on_delete=models.SET_NULL)
+
+
+
+
 
 class WooProduct(models.Model):
     product_id = models.IntegerField(unique=True, default=0)
@@ -183,24 +214,6 @@ class WooVariant(models.Model):
     shipping_class_id = models.IntegerField(null=True, blank=True)
     meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
     date_created = models.DateTimeField(null=True, blank=True)
-  
-
-class WooOrderItem(models.Model):
-    order = models.ForeignKey(to='WooOrder', related_name='woo_orderitems', on_delete=models.CASCADE)
-    # subscription = models.ForeignKey(to=WooSubscription, null=True, blank=True, on_delete=models.SET_NULL)
-    orderitem_id = models.IntegerField(null=True, blank=True, unique=True)
-    name = models.CharField(max_length=255, null=True, blank=True)
-    sku = models.CharField(max_length=255, null=True, blank=True)
-    tax_class = models.CharField(max_length=255, null=True, blank=True)
-    quantity = models.IntegerField(null=True, blank=True)
-    price = models.FloatField(null=True, blank=True, default=0)
-    subtotal = models.FloatField(null=True, blank=True, default=0)
-    subtotal_tax = models.FloatField(null=True, blank=True, default=0)
-    total = models.FloatField(null=True, blank=True, default=0)
-    total_tax = models.FloatField(null=True, blank=True, default=0)
-
-    product = models.ForeignKey(to='WooProduct', null=True, blank=True, on_delete=models.SET_NULL)
-    variant = models.ForeignKey(to='WooVariant', null=True, blank=True, on_delete=models.SET_NULL)
 
 
 

@@ -1,6 +1,9 @@
 from django.contrib.auth import logout, hashers, login 
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.http import HttpResponse
+
+from hyrportal import settings
 from .models import WooCustomer, WooOrder, WooProduct, User
 import json
 from django.shortcuts import redirect
@@ -10,8 +13,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import ModelForm
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView
+from django.views.generic import TemplateView, UpdateView, CreateView, DeleteView, RedirectView
 from django.contrib.auth.models import auth
+
+from django.contrib.auth.decorators import login_required
 # from django.contrib.auth import get_user_model
 # from .woo_task import woocommerce_api
 # from rest_framework import generics, permissions
@@ -21,12 +26,14 @@ from django.contrib.auth.models import auth
 # from rest_framework.authtoken.models import Tokens
 
 
-from .woo_task import woo_fn_sync
+# from .woo_task import woo_fn_sync
 
-wp = woo_fn_sync("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
-wp.sync_products()
-wp.sync_customers()
-wp.sync_orders()
+
+# wp = woo_fn_sync("https://automatiseramera.se/", "ck_092c10db6a942dffe7ce610667e8c42226be7889", "cs_0678d389f81fa5060d896e8e5fb50022626bf96b")
+
+# wp.sync_products()
+# wp.sync_customers()
+# wp.sync_orders()
 
 # class UsersViewSet(generics.ListCreateAPIView):
 
@@ -68,6 +75,29 @@ wp.sync_orders()
 
 #
 
+def connect(request):
+    return render(request, 'customer/connect.html')
+
+
+class LoginView(View):
+    def get(self, request):
+        print('I am in LoginView')
+        if request.method == 'POST':
+            email = request.POST.get('InputEmail1')
+            print(email)
+            password = request.POST.get('InputPassword')
+            print(password)
+            user = authenticate(request, username = email, password= password)
+            if user is not None:
+                auth.login(request, user)
+                print('User logged In')
+                request.session['is_login'] = 'true'
+                return redirect('/')
+            else:
+                return render(request, 'registration/signup.html')
+        else:
+            return render(request, 'registration/login.html')
+
 def request(request):
     print('I am in Login')
     if request.method == 'POST':
@@ -79,6 +109,7 @@ def request(request):
         if user is not None:
             auth.login(request, user)
             print('User logged In')
+            request.session['is_login'] = 'true'
             return redirect('/')
         else:
             return render(request, 'registration/signup.html')
@@ -116,60 +147,96 @@ def request(request):
 #     return render(request, 'registration/login.html', {form: form})
 
 def signup(request):
-    if request.method == 'POST':
-        companyName = request.POST.get('Company_Name')
-        print(companyName )
-        comapanyVat = request.POST.get('Company_Vat')
-        print(comapanyVat)
-        customerName = request.POST.get('Customer_Name')
-        print(customerName)
-        customerNum = request.POST.get('Customer_Number')
-        print(customerNum)
-        accountType = request.POST.get('Company_Vat')
-        print(accountType)
-        email = request.POST.get('inputEmail')
-        print(email)
-        password1 = request.POST.get('password1')
-        print(password1)
-        password2 = request.POST.get('password2')
-        print(password2)
-        Address = request.POST.get('inputAddress')
-        print(Address)
-        city = request.POST.get('inputCity')
-        print(city)
-        zipCode = request.POST.get('inputZip')
-        print(zipCode)
-        BoxChecked = request.POST.get('gridCheck')
-        print(BoxChecked)
+    if request.user.is_superuser:
+        if request.method == 'POST':
+            companyName = request.POST.get('Company_Name')
+            print(companyName )
+            comapanyVat = request.POST.get('Company_Vat')
+            print(comapanyVat)
+            user_name = request.POST.get('User_Name')
+            print(user_name)
+            customerNum = request.POST.get('Customer_Number')
+            print(customerNum)
+            accountType = request.POST.get('Company_Vat')
+            print(accountType)
+            email = request.POST.get('inputEmail')
+            print(email)
+            password1 = request.POST.get('password1')
+            print(password1)
+            password2 = request.POST.get('password2')
+            print(password2)
+            Address = request.POST.get('inputAddress')
+            print(Address)
+            city = request.POST.get('inputCity')
+            print(city)
+            zipCode = request.POST.get('inputZip')
+            print(zipCode)
+            BoxChecked = request.POST.get('gridCheck')
+            print(BoxChecked)
+            CustomerName = request.POST.get('CustomerName')
+            print(CustomerName)
 
-        if password2 == password1:
-            user = User.objects.create_user(username=customerName, email=email ,password=password1 , company_name=companyName,
-                                            address=Address, city=city, zip_code=zipCode, customer_no=customerNum)
-            user.save()
-            print('user Created')
-            return render(request, 'registration/login.html')
+            if password2 == password1:
+                user = User.objects.create_user(username=user_name, email=email ,password=password1 , company_name=companyName,
+                                                address=Address, city=city, zip_code=zipCode, customer_name = CustomerName,
+                                                customer_no=customerNum )
+
+                user.save()
+                print('user Created')
+                return redirect('/')
+            else:
+                print('Password not matched.')
+                message = 'Password not matched!'
+                return render(request, 'registration/signup.html', {'message' : message})
         else:
-            print('Password not matched.')
-            message = 'Password not matched!'
-            return render(request, 'registration/signup.html', {'message' : message})
+            return render(request, 'registration/signup.html')
+
     else:
-        return render(request, 'registration/signup.html')
+        html = "<html><body>Access Denied.%s.</body></html>"
+        return HttpResponse(html)
 
 
 # def get(self, request):
 #     logout(request)
 #     return redirect('/')
 
-# class LogoutView(View):
-#     def get(self, request):
-#         logout(request)
-#         return redirect('/')
+class LogoutView(View):
 
+    def get(self, request,  *args, **kwargs):
+        print('In LogOut')
+        del request.session['is_login']
+        logout(request)
+        return redirect('/')
+
+
+
+def home_page(request):
+    print("home_page")
+    is_login = request.session.get('is_login' , 'false')
+    print('session value ' + request.session.get('is_login' , 'false'))
+    if is_login == 'false':
+        print('not_login')
+        # return render(request, 'registration/login.html')
+        return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
+    else:
+        if request.user.is_superuser:
+            print('superuser_login')
+            return render(request, 'user/settings.html')
+        else:
+            print('customer_login')
+            return render(request, 'customer/settings.html')
+
+
+
+def cus(self):
+   return render(request, 'customer/settings.html')
 
 class SettingsView(UpdateView):
     template_name = 'settings.html'
     model = User
     fields = '__all__'
+
+
 
     # success_url = reverse_lazy('settings')
 
@@ -262,7 +329,13 @@ class SettingsView(UpdateView):
 class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'user/list.html'
 
+    # def head(self):
+    #     customer = User.first_name + ' ' + User.last_name
+    #     print(customer)
+
     def get_context_data(self, **kwargs):
+        print ('get_context_data ')
+        model = User
         sellers = list(User.objects.all().filter(is_seller=True))
         return dict(
             sellers=[
@@ -280,7 +353,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
 class UserCreateView(LoginRequiredMixin, CreateView):
     # template_name = 'user/create.html'
     template_name = 'registration/signup.html'
-    model = User
+
     fields = [
         'customer_no',
         'customer_name',

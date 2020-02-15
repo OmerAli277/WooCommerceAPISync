@@ -1,0 +1,37 @@
+{% extends 'auth1.html' %}
+{% block title %}Connect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-sm-6">
+        <a href="#" ><h5>Fortnox</h5></a>
+    </div>
+    <div class="col-sm-6">
+        <a href="#" >Visma</a>
+    </div>
+</div>
+<form>
+    <div class="form-row">
+      <div class="col">
+        <input type="text" name="Sales_Account_25%" class="form-control" placeholder="Sales Account 25%">
+      </div>
+      <div class="col">
+        <input type="text" name="Sales_Account_12%" class="form-control" placeholder="Sales Account 12%">
+      </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+          <input type="text" name="Sales_Account_6%" class="form-control" placeholder="Sales Account 6%">
+        </div>
+        <div class="col">
+          <input type="text" name="Freight_Account" class="form-control" placeholder="Freight Account">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col">
+          <input type="text" name="Start_Date" class="form-control" placeholder="Start Date">
+        </div>
+      </div>
+      <input type="submit" class="btn btn-primary" value="Update">
+</form>
+{% endblock %}

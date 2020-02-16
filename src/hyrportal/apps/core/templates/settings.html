@@ -14,11 +14,11 @@
             {% if request.user.is_superuser %}
                 <div class="card-block">
                     <form method="post">
-                        <!--{% csrf_token %}-->
+                        {% csrf_token %}
 
-                        <!--{{ form.as_p }}-->
+                        {{ form.as_p }}
 
-                        <button type="submit">Save</button>
+                        <input type="submit" value="Update">
                     </form>
 
                 </div>

@@ -24,7 +24,8 @@ from django.contrib.auth.decorators import login_required
 # from .serializers import UserSerialzer, CustomerSerialzer, ProductSerialzer, OrderSerialzer
 # from rest_framework.response import Response
 # from rest_framework.authtoken.models import Tokens
-
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 # from .woo_task import woo_fn_sync
 
@@ -146,6 +147,7 @@ def request(request):
 #         form = AuthenticationForm()
 #     return render(request, 'registration/login.html', {form: form})
 
+@user_passes_test(lambda u: u.is_superuser)
 def signup(request):
     if request.user.is_superuser:
         if request.method == 'POST':
@@ -209,7 +211,6 @@ class LogoutView(View):
         return redirect('/')
 
 
-
 def home_page(request):
     print("home_page")
     is_login = request.session.get('is_login' , 'false')
@@ -221,22 +222,63 @@ def home_page(request):
     else:
         if request.user.is_superuser:
             print('superuser_login')
-            return render(request, 'user/settings.html')
+            return redirect('settings')
+            # return render(request, 'settings.html')
         else:
             print('customer_login')
-            return render(request, 'customer/settings.html')
+            return redirect('customer-settings')
+            # return render(request, 'customer/settings.html')
 
 
 
-def cus(self):
-   return render(request, 'customer/settings.html')
+def cus(request):
+    print('In Cus')
+    return render(request, 'customer/settings.html')
 
+class CustomerSettingsView(UpdateView):
+    template_name = 'customer/settings.html'
+    model = User
+    fields = [
+        'customer_name',
+        'company_name',
+        'address',
+        'company_vat',
+        'zip_code',
+        'city'
+    ]
+
+    success_url = reverse_lazy('customer-settings')
+
+    def get_object(self, *args, **kwargs):
+        print("Customer Settings View")
+        return self.request.user
+
+
+def superuser_required():
+    def wrapper(wrapped):
+        class WrappedClass(UserPassesTestMixin, wrapped):
+            def test_func(self):
+                return self.request.user.is_superuser
+
+        return WrappedClass
+    return wrapper
+
+
+
+@superuser_required()
 class SettingsView(UpdateView):
     template_name = 'settings.html'
     model = User
-    fields = '__all__'
+    fields = [
+        'customer_name',
+        'company_name',
+        'address',
+        'company_vat',
+        'zip_code',
+        'city'
+    ]
 
-
+    success_url = reverse_lazy('settings')
 
     # success_url = reverse_lazy('settings')
 
@@ -321,13 +363,14 @@ class SettingsView(UpdateView):
     #         order_page_num += 1
     #     else:
     #         break
-
     def get_object(self, *args, **kwargs):
+        print("Settings View")
         return self.request.user
 
-
+@superuser_required()
 class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'user/list.html'
+    model = User
 
     # def head(self):
     #     customer = User.first_name + ' ' + User.last_name
@@ -335,7 +378,6 @@ class UserListView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         print ('get_context_data ')
-        model = User
         sellers = list(User.objects.all().filter(is_seller=True))
         return dict(
             sellers=[
@@ -349,7 +391,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
             ]
         )
 
-
+@superuser_required()
 class UserCreateView(LoginRequiredMixin, CreateView):
     # template_name = 'user/create.html'
     template_name = 'registration/signup.html'
@@ -365,14 +407,18 @@ class UserCreateView(LoginRequiredMixin, CreateView):
     #     form.instance.owner = self.request.user
     #     return super().form_valid(form)
 
-
+@superuser_required()
 class UserEditView(LoginRequiredMixin, UpdateView):
     template_name = 'user/edit.html'
     model = User
-    fields = ['customer_no', 'customer_name', 'account_type']
+    fields = [
+        'customer_no',
+        'customer_name',
+        'account_type'
+    ]
     success_url = reverse_lazy('user-list')
 
-
+@superuser_required()
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'user/delete.html'
     model = User

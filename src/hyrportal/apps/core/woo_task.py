@@ -2,6 +2,8 @@ import json
 import requests
 from woocommerce import API
 # from .models import User, WooCustomer, WooOrder, WooProduct, WooVariant, fortnoxApiDetails, WooCustomerShipping, WooCustomerBilling
+import sys
+print(sys.path)
 from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, WooCustomerShipping, WooCustomerBilling ,fortnoxApiDetails
 from .fn_client import fn_article_api, fn_customer_api, fn_invoice_api, fn_invoice_payment_api
 from django.db import DatabaseError
@@ -26,7 +28,7 @@ class woo_fn_sync:
         except DatabaseError as e:
             print('Database fortnoxApiDetails error: '+ str(e))
 
-        if fn_object.access_token != None  value exist in database=>fortnoxApiDetails:
+        if fn_object.access_token != None : #value exist in database=>fortnoxApiDetails
             # fortnoxApiDetails ... Use It
             client_secret = fn_object.client_secret
             access_token = fn_object.access_token

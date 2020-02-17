@@ -82,16 +82,12 @@ def connect(request):
 
 class LoginView(View):
     def get(self, request):
-        print('I am in LoginView')
         if request.method == 'POST':
             email = request.POST.get('InputEmail1')
-            print(email)
             password = request.POST.get('InputPassword')
-            print(password)
             user = authenticate(request, username = email, password= password)
             if user is not None:
                 auth.login(request, user)
-                print('User logged In')
                 request.session['is_login'] = 'true'
                 return redirect('/')
             else:
@@ -100,16 +96,12 @@ class LoginView(View):
             return render(request, 'registration/login.html')
 
 def request(request):
-    print('I am in Login')
     if request.method == 'POST':
         email = request.POST.get('InputEmail1')
-        print(email)
         password = request.POST.get('InputPassword')
-        print(password)
         user = authenticate(request, username = email, password= password)
         if user is not None:
             auth.login(request, user)
-            print('User logged In')
             request.session['is_login'] = 'true'
             return redirect('/')
         else:
@@ -152,42 +144,27 @@ def signup(request):
     if request.user.is_superuser:
         if request.method == 'POST':
             companyName = request.POST.get('Company_Name')
-            print(companyName )
             comapanyVat = request.POST.get('Company_Vat')
-            print(comapanyVat)
             user_name = request.POST.get('User_Name')
-            print(user_name)
             customerNum = request.POST.get('Customer_Number')
-            print(customerNum)
             accountType = request.POST.get('Company_Vat')
-            print(accountType)
             email = request.POST.get('inputEmail')
-            print(email)
             password1 = request.POST.get('password1')
-            print(password1)
             password2 = request.POST.get('password2')
-            print(password2)
             Address = request.POST.get('inputAddress')
-            print(Address)
             city = request.POST.get('inputCity')
-            print(city)
             zipCode = request.POST.get('inputZip')
-            print(zipCode)
             BoxChecked = request.POST.get('gridCheck')
-            print(BoxChecked)
             CustomerName = request.POST.get('CustomerName')
-            print(CustomerName)
 
             if password2 == password1:
                 user = User.objects.create_user(username=user_name, email=email ,password=password1 , company_name=companyName,
                                                 address=Address, city=city, zip_code=zipCode, customer_name = CustomerName,
-                                                customer_no=customerNum )
+                                                customer_no=customerNum , company_vat = comapanyVat, account_type=accountType)
 
                 user.save()
-                print('user Created')
                 return redirect('/')
             else:
-                print('Password not matched.')
                 message = 'Password not matched!'
                 return render(request, 'registration/signup.html', {'message' : message})
         else:
@@ -205,35 +182,28 @@ def signup(request):
 class LogoutView(View):
 
     def get(self, request,  *args, **kwargs):
-        print('In LogOut')
         del request.session['is_login']
         logout(request)
         return redirect('/')
 
 
 def home_page(request):
-    print("home_page")
     is_login = request.session.get('is_login' , 'false')
-    print('session value ' + request.session.get('is_login' , 'false'))
     if is_login == 'false':
-        print('not_login')
         # return render(request, 'registration/login.html')
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     else:
         if request.user.is_superuser:
-            print('superuser_login')
             return redirect('settings')
             # return render(request, 'settings.html')
         else:
-            print('customer_login')
             return redirect('customer-settings')
             # return render(request, 'customer/settings.html')
 
 
 
-def cus(request):
-    print('In Cus')
-    return render(request, 'customer/settings.html')
+# def cus(request):
+#     return render(request, 'customer/settings.html')
 
 class CustomerSettingsView(UpdateView):
     template_name = 'customer/settings.html'
@@ -250,7 +220,6 @@ class CustomerSettingsView(UpdateView):
     success_url = reverse_lazy('customer-settings')
 
     def get_object(self, *args, **kwargs):
-        print("Customer Settings View")
         return self.request.user
 
 
@@ -364,7 +333,6 @@ class SettingsView(UpdateView):
     #     else:
     #         break
     def get_object(self, *args, **kwargs):
-        print("Settings View")
         return self.request.user
 
 @superuser_required()
@@ -377,7 +345,6 @@ class UserListView(LoginRequiredMixin, TemplateView):
     #     print(customer)
 
     def get_context_data(self, **kwargs):
-        print ('get_context_data ')
         sellers = list(User.objects.all().filter(is_seller=True))
         return dict(
             sellers=[

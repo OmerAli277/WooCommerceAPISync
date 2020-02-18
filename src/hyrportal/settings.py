@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'hyrportal.apps.core',
-
+    'crispy_forms',
 
 
     # 'rest_framework',
@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     # 'allauth.account',
     # 'rest_auth.registration',
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -1,17 +1,17 @@
 from celery import Celery
 from datetime import timedelta
-# from woo_task import woo_fn_sync
+from hyrportal.apps.core.woo_task import woo_fn_sync
 
 app = Celery()
 app.config_from_object('celeryconfig', namespace='CELERY')
 
 @app.task
 def see_you():
-    # sync = woo_fn_sync()
+    sync = woo_fn_sync()
     print("See you in ten seconds!")
     print('-----------------')
     print('Start syncing Customers')
-    # sync.sync_customers()
+    sync.sync_customers()
     print('Start syncing products')
     # sync.sync_products()
     print('Start syncing orders')

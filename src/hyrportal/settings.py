@@ -91,7 +91,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'hyrportal',
         'USER': 'postgres',
-        'PASSWORD': 'JKrowling123',
+        'PASSWORD': '####',
         'HOST': 'localhost',
         'PORT': '',
     }

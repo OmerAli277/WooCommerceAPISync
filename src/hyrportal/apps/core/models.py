@@ -20,9 +20,9 @@ class User(AbstractUser):
     ]
     customer_no = models.CharField(max_length=128, null=True, blank=True, unique=True)
     customer_name = models.CharField(max_length=128, null=True, blank=True)
-    account_type = models.CharField(max_length=128, choices=ACCOUNT_TYPES, default=FORTNOX)
+    account_type = models.CharField(max_length=128, choices=ACCOUNT_TYPES)
     is_super_admin = models.BooleanField(default=False)
-    is_seller = models.BooleanField(default=True)
+    is_seller = models.BooleanField(default=False)
 
 
 

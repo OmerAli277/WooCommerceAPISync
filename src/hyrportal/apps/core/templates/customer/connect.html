@@ -2,6 +2,11 @@
 {% block title %}Connect{% endblock %}
 
 {% block content %}
+
+
+
+
+{% if request.user.account_type %}
 <div class="row">
     <div class="col-sm-6">
         <a href="#" ><h5>Fortnox</h5></a>
@@ -34,4 +39,20 @@
       </div>
       <input type="submit" class="btn btn-primary" value="Update">
 </form>
+{%else%}
+<div class="row" style="margin-bottom: 30px;">
+  <div class="col-sm-12">
+    <h3 class="font-weight-bold">You are not connected.</h3>
+    <h5>Please Connect:</h3>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+    <a><button type="button" class="btn btn-success">Fortnox</button></a>
+  </div>
+  <div class="col-sm-6">
+    <a href="#"><button type="button" class="btn btn-success">Visma</button></a>
+  </div>
+</div>
+{%endif%}
 {% endblock %}

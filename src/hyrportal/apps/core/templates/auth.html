@@ -1,14 +1,8 @@
 {% extends 'base.html' %}
 {% block body %}
     <!-- [ navigation menu ] start -->
-    <nav class="pcoded-navbar navbar-light bg-success">
+    <nav style="width: 150px;"class="pcoded-navbar navbar-light bg-success">
         <div class="navbar-wrapper">
-        <!-- put Logo is hear -->
-        <div class="navbar-brand header-logo">
-            <a href="index.html" class="b-brand">
-               <span class="b-title">HYR Portal</span>
-            </a>
-        </div>
             <!-- end Logo is hear -->
             <div class="navbar-content scroll-div">
                 <ul class="nav pcoded-inner-navbar">
@@ -17,20 +11,20 @@
                     </li>
                     <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item">
                         <a href="{% url 'settings' %}" class="nav-link ">
-                            <span class="pcoded-micon"><i class="feather icon-home"></i></span>
-                            <span class="pcoded-mtext">Settings</span>
+                            <span class="pcoded-micon text-white"><i class="feather icon-home"></i></span>
+                            <span class="pcoded-mtext text-white">Settings</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'user-list' %}" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-sidebar"></i></span>
-                            <span class="pcoded-mtext">Users</span>
+                            <span class="pcoded-micon text-white"><i class="feather icon-sidebar"></i></span>
+                            <span class="pcoded-mtext text-white">Users</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'logout' %}" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-home"></i></span>
-                            <span class="pcoded-mtext">Sign-out</span>
+                            <span class="pcoded-micon text-white"><i class="feather icon-home"></i></span>
+                            <span class="pcoded-mtext text-white">Sign-out</span>
                         </a>
                     </li>
                 </ul>

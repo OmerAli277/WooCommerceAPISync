@@ -147,7 +147,7 @@ def signup(request):
             comapanyVat = request.POST.get('Company_Vat')
             user_name = request.POST.get('User_Name')
             customerNum = request.POST.get('Customer_Number')
-            accountType = request.POST.get('Company_Vat')
+            # accountType = request.POST.get('account_type')
             email = request.POST.get('inputEmail')
             password1 = request.POST.get('password1')
             password2 = request.POST.get('password2')
@@ -160,7 +160,7 @@ def signup(request):
             if password2 == password1:
                 user = User.objects.create_user(username=user_name, email=email ,password=password1 , company_name=companyName,
                                                 address=Address, city=city, zip_code=zipCode, customer_name = CustomerName,
-                                                customer_no=customerNum , company_vat = comapanyVat, account_type=accountType)
+                                                customer_no=customerNum , company_vat = comapanyVat, is_seller=True)
 
                 user.save()
                 return redirect('/')
@@ -309,4 +309,19 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'user/delete.html'
     model = User
     success_url = reverse_lazy('user-list')
+
+# def login(request):
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#
+#             return redirect('user/create.html')
+#     else:
+#         form = AuthenticationForm()
+#     return render(request, 'registration/login.html', {form: form})
+
+def fortnoxauth(request):
+    if User.is_seller and User.account_type is None:
+        return render()
 

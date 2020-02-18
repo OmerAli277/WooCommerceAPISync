@@ -35,7 +35,7 @@ urlpatterns = [
 
 	path('', views.home_page , name='home_page'),
     path('connect/', views.connect, name='connect'),
-	path('fortnoxauth/', view.fortnoxauth, name='fortnox authenticate')
+	path('fortnoxauth/', views.fortnoxauth, name='fortnoxauth'),
 	path('settings/', views.SettingsView.as_view(), name='settings'),
 
 	path('customer-settings/', views.CustomerSettingsView.as_view(), name = "customer-settings"),

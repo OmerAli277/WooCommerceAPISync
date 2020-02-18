@@ -403,7 +403,15 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
 #     return render(request, 'registration/login.html', {form: form})
 
 def fortnoxauth(request):
-    if User.is_seller and User.account_type is None:
-        return render()
+    print('i am in fortnox auth')
+    print(User.is_seller)
+    a = User.account_type
+    print(a)
+    if User.is_seller and not User.account_type:
+        message = ""
+        return render(request, 'customer/fortnoxauth.html',  {'message' : message})
+    else:
+        # return render(request, 'customer/connect.html')
+        return redirect('connect')
 
 

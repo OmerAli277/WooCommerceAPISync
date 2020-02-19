@@ -3,3 +3,7 @@
 .env
 env/
 /static/*
+
+venv/
+src/celerybeat.pid
+src/celerybeat-schedule

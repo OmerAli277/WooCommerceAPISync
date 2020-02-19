@@ -2,8 +2,8 @@ from celery import Celery
 from datetime import timedelta
 # from woo_task import woo_fn_sync
 
-app = Celery()
-app.config_from_object('celeryconfig', namespace='CELERY')
+from hyrportal.celery import app
+
 
 @app.task
 def see_you():
@@ -19,7 +19,7 @@ def see_you():
 
 app.conf.beat_schedule = {
     "see-you-in-ten-seconds-task": {
-        "task": "core.see_you",
+        "task": "hyrportal.apps.core.tasks.see_you",
         "schedule": 10.0
     }
 }

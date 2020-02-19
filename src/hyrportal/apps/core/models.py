@@ -269,10 +269,10 @@ class WooCommerceSettings(models.Model):
     #     return f"[{self.subscription_settings}] - {self.id}"
 
 class fortnoxApiDetails(models.Model):
-    seller_id = models.ForeignKey(User, on_delete=models.CASCADE,  null=True, blank=True)
-    client_secret = models.CharField(max_length=255, blank=True, null=True)
-    access_token = models.CharField(max_length=255, blank=True, null=True)
-    authorization_Code = models.CharField(max_length=255, blank=True, null=True)
+    seller_id = models.ForeignKey(to='User', on_delete=models.CASCADE,  null=False, default='')
+    client_secret = models.CharField(max_length=255, default='', null=False)
+    access_token = models.CharField(max_length=255, default='', null=False)
+    authorization_Code = models.CharField(max_length=255, default='', null=False)
 
 class WooCommerceDetails(models.Model):
     host = models.CharField(max_length=255, blank=True, null=True)

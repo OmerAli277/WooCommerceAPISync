@@ -1,12 +1,59 @@
 {% extends 'auth.html' %}
+
+
+{% load crispy_forms_tags %}
 {% block title %}Edit user{% endblock %}
 
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
+<div class="row">
+    <div class="col-sm-10">
+        <div class="card">
+            <div class="card-header">
+                <h5>Edit user</h5>
+            </div>
 
-        {{ form.as_p }}
+            {% if request.user.is_superuser %}
+                <div class="card-block">
+                    <form method="post">
+                        {% csrf_token %}
 
-        <input type="submit" value = "Edit">
-    </form>
+                                                <div class="form-row">
+                          <div class="form-group col-md-6 mb-0">
+                              {{ form.customer_name|as_crispy_field }}
+                          </div>
+                          <div class="form-group col-md-6 mb-0">
+                            {{ form.company_name|as_crispy_field }}
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-group col-md-6 mb-0">
+                            {{ form.address|as_crispy_field }}
+                          </div>
+                          <div class="form-group col-md-6 mb-0">
+                            {{ form.company_vat|as_crispy_field }}
+                          </div>
+                        </div>
+
+                        <div class="form-row">
+                          <div class="form-group col-md-6 mb-0">
+                            {{ form.zip_code|as_crispy_field }}
+                          </div>
+                          <div class="form-group col-md-6 mb-0">
+                            {{ form.city|as_crispy_field }}
+                          </div>
+                        </div>
+
+                        <input type="submit" class="btn btn-primary"  value="Update">
+                    </form>
+
+                </div>
+            {% else %}
+                <h1>You are not a super user</h1>
+            {% endif %}
+        </div>
+    </div>
+    <!-- [ sample-page ] end -->
+</div>
+
 {% endblock %}

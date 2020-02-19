@@ -252,16 +252,11 @@ class SettingsView(UpdateView):
     def get_object(self, *args, **kwargs):
         return self.request.user
 
+
 @superuser_required()
-
-
 class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'user/list.html'
     model = User
-
-    # def head(self):
-    #     customer = User.first_name + ' ' + User.last_name
-    #     print(customer)
 
     def get_context_data(self, **kwargs):
         sellers = list(User.objects.all().filter(is_seller=True))
@@ -278,29 +273,16 @@ class UserListView(LoginRequiredMixin, TemplateView):
         )
 
 @superuser_required()
-class UserCreateView(LoginRequiredMixin, CreateView):
-    # template_name = 'user/create.html'
-    template_name = 'registration/signup.html'
-
-    fields = [
-        'customer_no',
-        'customer_name',
-        'account_type',
-    ]
-    success_url = reverse_lazy('user-list')
-
-    # def form_valid(self, form):
-    #     form.instance.owner = self.request.user
-    #     return super().form_valid(form)
-
-@superuser_required()
 class UserEditView(LoginRequiredMixin, UpdateView):
     template_name = 'user/edit.html'
     model = User
     fields = [
-        'customer_no',
         'customer_name',
-        'account_type'
+        'company_name',
+        'address',
+        'company_vat',
+        'zip_code',
+        'city'
     ]
     success_url = reverse_lazy('user-list')
 
@@ -310,16 +292,6 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy('user-list')
 
-# def login(request):
-#     if request.method == 'POST':
-#         form = AuthenticationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#
-#             return redirect('user/create.html')
-#     else:
-#         form = AuthenticationForm()
-#     return render(request, 'registration/login.html', {form: form})
 
 def fortnoxauth(request):
     print('i am in fortnox auth')

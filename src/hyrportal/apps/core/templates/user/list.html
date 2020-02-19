@@ -1,31 +1,48 @@
 {% extends 'auth.html' %}
-{% block title %}User management{% endblock %}
+
+{% load crispy_forms_tags %}
+{% block title %}Users{% endblock %}
 {% block content %}
-    <p>Users</p>
 
-    <a href="{% url 'user-create' %}">Add user</a>
 
-    <table>
-        <thead>
-            <tr>
-                <td>Customer #</td>
-                <td>Customer</td>
-                <td>Accounting Type</td>
-                <td></td>
-            </tr>
-        </thead>
-        <tbody>
-        {% for seller in sellers %}
-            <tr>
-                <td>{{ seller.customer_no }}</td>
-                <td>{{ seller.customer_name }}</td>
-                <td>{{ seller.account_type|title }}</td>
-                <td>
-                    <a href="{% url 'user-edit' seller.id %}">Edit</a>
-                    <a href="{% url 'user-delete' seller.id %}">Delete</a>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+<div class="row">
+    <div  class="col-sm-10">
+        <div class="card">
+            <div class="card-header">
+                <h5>User Management</h5>
+            </div>
+
+    <a class="fa fa-plus" style="padding:15px" aria-hidden="true" href="{% url 'user-create' %}"> ADD USER</a>
+
+            <h3 class="text-success" style="padding:10px" >User OverView</h3>
+            <div style="padding:15px">
+            <table class="table">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">Customer #</th>
+                        <th scope="col">Customer name</th>
+                        <th scope="col">Accounting Type</th>
+                        <th scope="col">Operations</th>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for seller in sellers %}
+                    <tr>
+                        <td>{{ seller.customer_no }}</td>
+                        <td>{{ seller.customer_name }}</td>
+                        <td>{{ seller.account_type|title }}</td>
+                        <td>
+                            <a style="padding:5px" href="{% url 'user-edit' seller.id %}">Edit</a>
+                            <a style="padding:5px" href="{% url 'user-delete' seller.id %}">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

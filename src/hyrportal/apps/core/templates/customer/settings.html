@@ -5,13 +5,13 @@
 {% block content %}
 <div class="row">
     <!-- [ sample-page ] start -->
-    <div class="col-sm-12">
+    <div class="col-sm-10">
         <div class="card">
             <div class="card-header">
                 <h5>Customer Settings</h5>
             </div>
                 <div class="card-block">
-                    <form method="post">
+                    <form>
                         {% csrf_token %}
 
                          <div class="form-row">
@@ -40,13 +40,6 @@
                             {{ form.city|as_crispy_field }}
                           </div>
                         </div>
-
-                        <!--<table>-->
-                            <!--{{ form.as_table }}-->
-                        <!--</table>-->
-
-
-                        <input type="submit" class="btn btn-primary" value="Update">
                     </form>
                 </div>
         </div>

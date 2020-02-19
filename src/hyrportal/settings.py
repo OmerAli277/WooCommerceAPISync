@@ -23,7 +23,7 @@ SECRET_KEY = "My-KeY12335556QWEF"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['157.230.115.82', '127.0.0.1']
 
 AUTH_USER_MODEL = 'core.User'
 
@@ -148,7 +148,9 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/login/'
 
-
-
-
-
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'

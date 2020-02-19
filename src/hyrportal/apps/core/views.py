@@ -36,46 +36,9 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 # wp.sync_customers()
 # wp.sync_orders()
 
-# class UsersViewSet(generics.ListCreateAPIView):
-
-#     queryset = User.objects.all()
-#     serializer_class = UserSerialzer
 
 
-# class GetUserView(generics.RetrieveUpdateAPIView):
-
-#     serializer_class = UserSerialzer
-
-#     def get_queryset(self):
-#         print(self.kwargs.get('pk'))
-#         return User.objects.filter(id=self.kwargs.get('pk'))
-
-# class GetToken(APIView):
-#     """
-#     GetToken
-#     """
-#     permission_classes = (permissions.AllowAny,)
-
-#     def post(self, request, _format=None):
-#         """
-#         {
-#         "password":"asdf1234",
-#         "username":"hanif"
-#         }
-#         """
-#         user = User.objects.get(username=request.data.get("username"))
-#         if not user:
-#             return Response({"success": False, "Message": "user does not exist"})
-        
-#         token = None
-#         if hashers.check_password(request.data.get("password"), user.password):
-#             token, _ = Token.objects.get_or_create(user=user)
-#             login(request, user)
-#         return Response({"success": True, "Message": "successful", "token": token.key if token else None})
-
-
-#
-
+@login_required()
 def connect(request):
     return render(request, 'customer/connect.html')
 
@@ -95,6 +58,7 @@ class LoginView(View):
         else:
             return render(request, 'registration/login.html')
 
+
 def request(request):
     if request.method == 'POST':
         email = request.POST.get('InputEmail1')
@@ -109,35 +73,6 @@ def request(request):
     else:
         return render(request, 'registration/login.html')
 
-
-
-# def login_view(request):
-#     print('I am in Login')
-#     if request.method == 'POST':
-#         email = request.POST.get('InputEmail1')
-#         print(email)
-#         password = request.POST.get('InputPassword')
-#         print(password)
-#         user = authenticate(request, username = email, password= password)
-#         if user is not None:
-#             auth.login(request, user)
-#             return redirect('/')
-#         else:
-#             return render(request, 'registration/signup.html')
-#     else:
-#         return render(request, 'registration/login.html')
-
-
-# def login(request):
-#     if request.method == 'POST':
-#         form = AuthenticationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-
-#             return redirect('user/create.html')
-#     else:
-#         form = AuthenticationForm()
-#     return render(request, 'registration/login.html', {form: form})
 
 @user_passes_test(lambda u: u.is_superuser)
 def signup(request):
@@ -179,6 +114,8 @@ def signup(request):
 #     logout(request)
 #     return redirect('/')
 
+
+
 class LogoutView(View):
 
     def get(self, request,  *args, **kwargs):
@@ -205,6 +142,7 @@ def home_page(request):
 # def cus(request):
 #     return render(request, 'customer/settings.html')
 
+# @login_required()
 class CustomerSettingsView(UpdateView):
     template_name = 'customer/settings.html'
     model = User
@@ -231,8 +169,6 @@ def superuser_required():
 
         return WrappedClass
     return wrapper
-
-
 
 @superuser_required()
 class SettingsView(UpdateView):
@@ -374,7 +310,7 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = User
     success_url = reverse_lazy('user-list')
 
-
+@login_required()
 def fortnoxauth(request):
     if request.method == 'GET':
         if request.user.is_seller and not request.user.account_type:

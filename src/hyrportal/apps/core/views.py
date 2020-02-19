@@ -2,7 +2,7 @@ from django.contrib.auth import logout, hashers, login
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.http import HttpResponse
-
+import requests
 from hyrportal import settings
 from .models import WooCustomer, WooOrder, WooProduct, User, fortnoxApiDetails
 import json
@@ -37,28 +37,34 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 # wp.sync_orders()
 
 
-
+#Display connect page to the customer
 @login_required()
 def connect(request):
-    return render(request, 'customer/connect.html')
+    if request.user.is_superuser is False:
+        return render(request, 'customer/connect.html')
+    else:
+        return render(request, '401.html')
 
 
-class LoginView(View):
-    def get(self, request):
-        if request.method == 'POST':
-            email = request.POST.get('InputEmail1')
-            password = request.POST.get('InputPassword')
-            user = authenticate(request, username = email, password= password)
-            if user is not None:
-                auth.login(request, user)
-                request.session['is_login'] = 'true'
-                return redirect('/')
-            else:
-                return render(request, 'registration/signup.html')
-        else:
-            return render(request, 'registration/login.html')
 
+# class LoginView(View):
+#     def get(self, request):
+#         if request.method == 'POST':
+#             email = request.POST.get('InputEmail1')
+#             password = request.POST.get('InputPassword')
+#             user = authenticate(request, username = email, password= password)
+#             if user is not None:
+#                 if auth.login(request, user):
+#                     request.session['is_login'] = 'true'
+#                     return redirect('/')
+#                 else:
+#                     return render(request, '401.html')
+#             else:
+#                 return render(request, '401.html')
+#         else:
+#             return render(request, '401.html')
 
+#handles the request for Logging in of customer or superuser
 def request(request):
     if request.method == 'POST':
         email = request.POST.get('InputEmail1')
@@ -69,11 +75,11 @@ def request(request):
             request.session['is_login'] = 'true'
             return redirect('/')
         else:
-            return render(request, 'registration/signup.html')
+            return render(request, '401.html')
     else:
-        return render(request, 'registration/login.html')
+        return render(request, '401.html')
 
-
+#this view is called when super user wants to add a new customer by clicking ADD USER from portal
 @user_passes_test(lambda u: u.is_superuser)
 def signup(request):
     if request.user.is_superuser:
@@ -109,39 +115,27 @@ def signup(request):
         html = "<html><body>Access Denied.%s.</body></html>"
         return HttpResponse(html)
 
-
-# def get(self, request):
-#     logout(request)
-#     return redirect('/')
-
-
-
+#this is a logout view
 class LogoutView(View):
-
     def get(self, request,  *args, **kwargs):
         del request.session['is_login']
         logout(request)
         return redirect('/')
 
-
+#Render and homepage(settings) page and authenticate either a user is a customer or a super user
 def home_page(request):
     is_login = request.session.get('is_login' , 'false')
     if is_login == 'false':
-        # return render(request, 'registration/login.html')
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     else:
         if request.user.is_superuser:
             return redirect('settings')
-            # return render(request, 'settings.html')
         else:
             return redirect('customer-settings')
-            # return render(request, 'customer/settings.html')
 
 
 
-# def cus(request):
-#     return render(request, 'customer/settings.html')
-
+#Display the data of the current user currently loged in
 # @login_required()
 class CustomerSettingsView(UpdateView):
     template_name = 'customer/settings.html'
@@ -158,9 +152,12 @@ class CustomerSettingsView(UpdateView):
     success_url = reverse_lazy('customer-settings')
 
     def get_object(self, *args, **kwargs):
-        return self.request.user
+         if User.is_superuser is False:
+            return self.request.user
+         else:
+             return None
 
-
+#Decorator to check if the user is completing requirements for a certian action
 def superuser_required():
     def wrapper(wrapped):
         class WrappedClass(UserPassesTestMixin, wrapped):
@@ -170,6 +167,7 @@ def superuser_required():
         return WrappedClass
     return wrapper
 
+#Display the data of the current super user currently loged in
 @superuser_required()
 class SettingsView(UpdateView):
     template_name = 'settings.html'
@@ -185,92 +183,10 @@ class SettingsView(UpdateView):
 
     success_url = reverse_lazy('settings')
 
-    # success_url = reverse_lazy('settings')
-
-    # customer_page_num = 1
-    # """Parsing records for customers """
-    # while True:
-    #     current_dict = wcapi.get("customers", params={'per_page': 1, 'page': customer_page_num}).json()
-    #     for i in current_dict:
-    #             # print(i)
-    #             # obj = WooCustomer(customer_id=i['id'], first_name=i[0]['first_name'])
-    #             # obj.save()
-    #         try:
-    #             obj, created  = WooCustomer.objects.update_or_create(customer_id=i['id'], first_name=i['first_name'],
-    #                               last_name=i['last_name'], company=i['billing']['company'],
-    #                               address_1=i['billing']['address_1'],
-    #                               address_2=i['billing']['address_2'],
-    #                               city=i['billing']['city'], state=i['billing']['state'],
-    #                               postcode=i['billing']['postcode'],
-    #                               country=i['billing']['country'],
-    #                               email=i['email'], phone=i['billing']['phone'], date_created=i['date_created'],
-    #                               date_modified=i['date_modified'], is_paying_customer=i['is_paying_customer'])
-    #         except:
-    #             pass
-    #     if len(current_dict) > 0:
-    #         customer_page_num += 1
-    #     else:
-    #         break
-    #
-    # order_page_num = 1
-    #
-    # """Parsing records for orders """
-    #
-    # while True:
-    #     current_dict = wcapi.get("orders", params={'per_page': 1, 'page': order_page_num}).json()
-    #     try:
-    #         obj = WooOrder(order_id=current_dict[0]['id'], parent_id=current_dict[0]['parent_id'],
-    #                        number=current_dict[0]['number'], order_key=current_dict[0]['order_key'],
-    #                        created_via=current_dict[0]['created_via'],
-    #                        version=current_dict[0]['version'],
-    #                        status=current_dict[0]['status'], currency=current_dict[0]['currency'],
-    #                        discount_total=current_dict[0]['discount_total'],
-    #                        discount_tax=current_dict[0]['discount_tax'],
-    #                        shipping_total=current_dict[0]['shipping_total'],
-    #                        shipping_tax=current_dict[0]['shipping_tax'],
-    #                        cart_tax=current_dict[0]['cart_tax'], total=current_dict[0]['total'],
-    #                        total_tax=current_dict[0]['total_tax'],
-    #                        prices_include_tax=current_dict[0]['prices_include_tax'],
-    #                        payment_method=current_dict[0]['payment_method'],
-    #                        payment_method_title=current_dict[0]['payment_method_title'],
-    #                        transaction_id=current_dict[0]['transaction_id'],
-    #                        date_created=current_dict[0]['date_created'],
-    #                        date_modified=current_dict[0]['date_modified'],
-    #                        date_paid=current_dict[0]['date_paid'],
-    #                        date_completed=current_dict[0]['date_completed']
-    #                        )
-    #         obj.save()
-    #     except:
-    #         obj = WooOrder(order_id=current_dict[0]['id'], parent_id=current_dict[0]['parent_id'],
-    #                        number=current_dict[0]['number'], order_key=current_dict[0]['order_key'],
-    #                        created_via=current_dict[0]['created_via'],
-    #                        version=current_dict[0]['version'],
-    #                        status=current_dict[0]['status'], currency=current_dict[0]['currency'],
-    #                        discount_total=current_dict[0]['discount_total'],
-    #                        discount_tax=current_dict[0]['discount_tax'],
-    #                        shipping_total=current_dict[0]['shipping_total'],
-    #                        shipping_tax=current_dict[0]['shipping_tax'],
-    #                        cart_tax=current_dict[0]['cart_tax'], total=current_dict[0]['total'],
-    #                        total_tax=current_dict[0]['total_tax'],
-    #                        prices_include_tax=current_dict[0]['prices_include_tax'],
-    #                        payment_method=current_dict[0]['payment_method'],
-    #                        payment_method_title=current_dict[0]['payment_method_title'],
-    #                        transaction_id=current_dict[0]['transaction_id'],
-    #                        date_created=current_dict[0]['date_created'],
-    #                        date_modified=current_dict[0]['date_modified'],
-    #                        date_paid=current_dict[0]['date_paid'],
-    #                        date_completed=current_dict[0]['date_completed']
-    #                        )
-    #         obj.save()
-    #
-    #     if len(current_dict) > 0:
-    #
-    #         order_page_num += 1
-    #     else:
-    #         break
     def get_object(self, *args, **kwargs):
         return self.request.user
 
+#Display the list of the customer in the current system
 @superuser_required()
 class UserListView(LoginRequiredMixin, TemplateView):
     template_name = 'user/list.html'
@@ -290,6 +206,7 @@ class UserListView(LoginRequiredMixin, TemplateView):
             ]
         )
 
+#Allow the super user to Update the data of the customer selected
 @superuser_required()
 class UserEditView(LoginRequiredMixin, UpdateView):
     template_name = 'user/edit.html'
@@ -304,6 +221,7 @@ class UserEditView(LoginRequiredMixin, UpdateView):
     ]
     success_url = reverse_lazy('user-list')
 
+#Allow the super user to Delete selected customer
 @superuser_required()
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     template_name = 'user/delete.html'

@@ -1,10 +1,17 @@
 {% extends 'auth1.html' %}
 {% load crispy_forms_tags %}
-{% block title %}Settings{% endblock %}
+{% block title %} Settings {% endblock %}
 
 {% block content %}
+
+{% if request.user.is_superuser %}
+
+<h3>Unauthorised Access Denied!</h3>
+
+{% else %}
+
+
 <div class="row">
-    <!-- [ sample-page ] start -->
     <div class="col-sm-10">
         <div class="card">
             <div class="card-header">
@@ -44,6 +51,7 @@
                 </div>
         </div>
     </div>
-    <!-- [ sample-page ] end -->
 </div>
+
+{% endif %}
 {% endblock %}

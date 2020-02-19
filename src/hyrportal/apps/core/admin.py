@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from .models import WooCustomer, WooProduct, WooOrder, User
+from .models import WooCustomer, WooProduct, WooOrder, User, WooCommerceDetails
 
 admin.site.register(User)
 
@@ -67,3 +67,9 @@ class WooOrderAdmin(admin.ModelAdmin):
               'discount_total', 'discount_tax', 'shipping_total', 'shipping_tax', 'cart_tax', 'total', 'total_tax',
               'prices_include_tax', 'payment_method', 'payment_method_title', 'transaction_id', 'date_created',
               'date_modified', 'date_paid', 'date_completed')
+
+@admin.register(WooCommerceDetails)
+class WooCommerceDetailsAdmin(admin.ModelAdmin):
+    list_display = ('host', 'consumer_key', 'consumer_secret')
+
+    fields = ('host', 'consumer_key', 'consumer_secret')

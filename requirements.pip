@@ -1,11 +1,12 @@
 amqp==2.5.2
 astroid==2.3.3
 billiard==3.6.2.0
-celery==4.4.0
+celery==4.3.0
 certifi==2019.11.28
 chardet==3.0.4
 Django==2.2.8
 django-environ==0.4.5
+gunicorn==20.0.4
 idna==2.8
 importlib-metadata==1.5.0
 isort==4.3.21
@@ -16,6 +17,7 @@ ordereddict==1.1
 psycopg2==2.8.4
 pylint==2.4.4
 pytz==2019.3
+redis==3.4.1
 requests==2.22.0
 six==1.14.0
 sqlparse==0.3.0

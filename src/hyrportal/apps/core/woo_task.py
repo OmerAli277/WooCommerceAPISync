@@ -212,8 +212,8 @@ class woo_fn_sync:
 
                                 # fortnox API Update
                                 result = fn_article.fn_update_article(str(wp['id']), self.fn_article_obj_u(wp))
-                                print('Arctile Updated:')
-                                print(result)
+                                # print('Arctile Updated:')
+                                # print(result)
 
                         else: # Does not exist in local, but exist in woocomerce
                             new_product = WooProduct.objects.create(
@@ -259,8 +259,8 @@ class woo_fn_sync:
                             
                             # Fortnox API Create
                             result = fn_article.fn_create_article(self.fn_article_obj(wp))
-                            print('Article created:')
-                            print(result)
+                            # print('Article created:')
+                            # print(result)
 
 
                     for lp in local_ids:
@@ -269,8 +269,8 @@ class woo_fn_sync:
 
                             # Fortnox API Create
                             result = fn_article.fn_delete_article(str(local_ids[lp]['id']))
-                            print('Article created:')
-                            print(result)
+                            # print('Article delete:')
+                            # print(result)
 
                 except DatabaseError as e:
                     print('Database error: ' + str(e))
@@ -635,111 +635,119 @@ class woo_fn_sync:
                 fn_invoice = fn_invoice_api(access_token, client_secret)
                 fn_invoice_payment = fn_invoice_payment_api(access_token, client_secret)
 
+                user_id = User.objects.get(id=w_user.id)
+                seller_id = user_id.customer_no
 
                 r = self.wcapi.get("orders")
                 orders = r.json()
-                print ('In sync_orders')
-                try :
-                    local_orders = WooOrder.objects.values('order_id')
-                    print(local_orders)
 
-                    local_ids = {}
-                    for lp in local_orders:
-                        local_ids[lp['order_id']] = {'exist': False, 'id':lp['order_id']}
+                #parsing of woo-order_id for unique seller id
+                woo_order_id = 'H100-1' #dummy id created
+                dummy = woo_order_id.split('-')
+                woo_seller_id = dummy[0]
 
-                    for WO in orders:
-                        if local_ids.get(WO['id']) != None: # Exist in both local and woocomerce
-                            local_ids[WO['id']]['exist'] = True
-                            local_p = WooOrder.objects.get(order_id=WO['id'])
-                            if (local_p != None) and (WO['date_modified'] != local_p.date_modified):
-                                # Updata the local Product
-                                local_p.order_id = WO['id']
-                                local_p.parent_id = WO['parent_id']
-                                local_p.number = WO['number']
-                                local_p.order_key =  WO['order_key']
-                                local_p.created_via =  WO['created_via']
-                                local_p.version =  WO['version']
-                                local_p.status =  WO['status']
-                                local_p.currency =  WO['currency']
-                                local_p.discount_total = WO['discount_total']
-                                local_p.discount_tax =  WO['discount_tax']
-                                local_p.shipping_total =  WO['shipping_total']
-                                local_p.shipping_tax =  WO['shipping_tax']
-                                local_p.cart_tax =  WO['cart_tax']
-                                local_p.total =  WO['total']
-                                local_p.total_tax =  WO['total_tax']
-                                local_p.prices_include_tax =  WO['prices_include_tax']
-                                local_p.payment_method =  WO['payment_method']
-                                local_p.payment_method_title = WO['payment_method_title']
-                                local_p.transaction_id =  WO['transaction_id']
+                if seller_id == woo_seller_id:
 
-                                local_p.date_modified = WO['date_modified']
-                                local_p.date_paid = WO['date_paid']
-                                local_p.date_completed = WO['date_completed']
+                    # print ('In sync_orders')
+                    try :
+                        local_orders = WooOrder.objects.values('order_id')
+                        # print(local_orders)
 
-                                local_p.save()
+                        local_ids = {}
+                        for lp in local_orders:
+                            local_ids[lp['order_id']] = {'exist': False, 'id':lp['order_id']}
+
+                        for WO in orders:
+                            if local_ids.get(WO['id']) != None: # Exist in both local and woocomerce
+                                local_ids[WO['id']]['exist'] = True
+                                local_p = WooOrder.objects.get(order_id=WO['id'])
+                                if (local_p != None) and (WO['date_modified'] != local_p.date_modified):
+                                    # Updata the local Product
+                                    local_p.order_id = WO['id']
+                                    local_p.parent_id = WO['parent_id']
+                                    local_p.number = WO['number']
+                                    local_p.order_key =  WO['order_key']
+                                    local_p.created_via =  WO['created_via']
+                                    local_p.version =  WO['version']
+                                    local_p.status =  WO['status']
+                                    local_p.currency =  WO['currency']
+                                    local_p.discount_total = WO['discount_total']
+                                    local_p.discount_tax =  WO['discount_tax']
+                                    local_p.shipping_total =  WO['shipping_total']
+                                    local_p.shipping_tax =  WO['shipping_tax']
+                                    local_p.cart_tax =  WO['cart_tax']
+                                    local_p.total =  WO['total']
+                                    local_p.total_tax =  WO['total_tax']
+                                    local_p.prices_include_tax =  WO['prices_include_tax']
+                                    local_p.payment_method =  WO['payment_method']
+                                    local_p.payment_method_title = WO['payment_method_title']
+                                    local_p.transaction_id =  WO['transaction_id']
+
+                                    local_p.date_modified = WO['date_modified']
+                                    local_p.date_paid = WO['date_paid']
+                                    local_p.date_completed = WO['date_completed']
+
+                                    local_p.save()
+
+                                    # Fortnox API Update
+                                    if WO['status'] != "completed" : 
+                                        result  = fn_invoice.fn_update_invoice(WO['id'], self.fn_invoice_obj_u(WO))
+                                        # print('Invoice Updated:')
+                                        # print(result)
+                                    else:
+                                        result  = fn_invoice_payment.fn_update_invoice_payment(WO['id'], self.fn_invoice_payment_obj_u(WO))
+                                        # print('Invoice payment Updated:')
+                                        # print(result)
+
+                                else: # Does not exist in local, but exist in woocomerce
+                                new_order = WooOrder.objects.create(
+                                    order_id = WO['id'],
+                                    parent_id = WO['parent_id'],
+                                    number = WO['number'],
+                                    order_key =  WO['order_key'],
+                                    created_via =  WO['created_via'],
+                                    version =  WO['version'],
+                                    status =  WO['status'],
+                                    currency =  WO['currency'],
+                                    discount_total = WO['discount_total'],
+                                    discount_tax =  WO['discount_tax'],
+                                    shipping_total =  WO['shipping_total'],
+                                    shipping_tax =  WO['shipping_tax'],
+                                    cart_tax =  WO['cart_tax'],
+                                    total =  WO['total'],
+                                    total_tax =  WO['total_tax'],
+                                    prices_include_tax =  WO['prices_include_tax'],
+                                    payment_method =  WO['payment_method'],
+                                    payment_method_title = WO['payment_method_title'],
+                                    transaction_id =  WO['transaction_id'],
+
+                                    date_created = WO['date_created'],
+                                    date_modified = WO['date_modified'],
+                                    date_paid = WO['date_paid'],
+                                    date_completed = WO['date_completed'])
 
                                 # Fortnox API Update
-                                if WO['status'] != "completed" : 
-                                    result  = fn_invoice.fn_update_invoice(WO['id'], self.fn_invoice_obj_u(WO))
-                                    print('Invoice Updated:')
-                                    print(result)
+                                if WO['status'] != "completed" :
+                                    result  = fn_invoice.fn_create_invoice(self.fn_invoice_obj(WO))
+                                    # print('Invoice created:')
+                                    # print(result)
                                 else:
-                                    result  = fn_invoice_payment.fn_update_invoice_payment(WO['id'], self.fn_invoice_payment_obj_u(WO))
-                                    print('Invoice payment Updated:')
-                                    print(result)
-
-                            else: # Does not exist in local, but exist in woocomerce
-                            new_order = WooOrder.objects.create(
-                                order_id = WO['id'],
-                                parent_id = WO['parent_id'],
-                                number = WO['number'],
-                                order_key =  WO['order_key'],
-                                created_via =  WO['created_via'],
-                                version =  WO['version'],
-                                status =  WO['status'],
-                                currency =  WO['currency'],
-                                discount_total = WO['discount_total'],
-                                discount_tax =  WO['discount_tax'],
-                                shipping_total =  WO['shipping_total'],
-                                shipping_tax =  WO['shipping_tax'],
-                                cart_tax =  WO['cart_tax'],
-                                total =  WO['total'],
-                                total_tax =  WO['total_tax'],
-                                prices_include_tax =  WO['prices_include_tax'],
-                                payment_method =  WO['payment_method'],
-                                payment_method_title = WO['payment_method_title'],
-                                transaction_id =  WO['transaction_id'],
-
-                                date_created = WO['date_created'],
-                                date_modified = WO['date_modified'],
-                                date_paid = WO['date_paid'],
-                                date_completed = WO['date_completed'])
-
-                            # Fortnox API Update
-                            if WO['status'] != "completed" :
-                                result  = fn_invoice.fn_create_invoice(self.fn_invoice_obj(WO))
-                                print('Invoice created:')
-                                print(result)
-                            else:
-                                result  = fn_invoice_payment.fn_create_invoice_payment(self.fn_invoice_obj(WO))
-                                print('Invoice payment created:')
-                                print(result)
-                    
-                    for lp in local_ids:
-                        if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
-                            result = WooOrder.objects.get(order_id=local_ids[lp]['id'])
-                            
-                            # result1 = fn_invoice.fn
-                            # # fotnox delete
-                            # if result.status == 'complete' :
-
-                            WooOrder.objects.filter(order_id=local_ids[lp]['id']).delete()
-
-
+                                    result  = fn_invoice_payment.fn_create_invoice_payment(self.fn_invoice_obj(WO))
+                                    # print('Invoice payment created:')
+                                    # print(result)
                         
-                except DatabaseError as e:
-                    print('Database error: ' + str(e))
+                        for lp in local_ids:
+                            if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                                result = WooOrder.objects.get(order_id=local_ids[lp]['id'])
+                                
+                                # result1 = fn_invoice.fn
+                                # # fotnox delete
+                                # if result.status == 'complete' :
+
+                                WooOrder.objects.filter(order_id=local_ids[lp]['id']).delete()
+
+                    except DatabaseError as e:
+                        print('Database error: ' + str(e))
 
         except DatabaseError as e:
             print('Database error: ' + str(e))
@@ -956,8 +964,8 @@ class woo_fn_sync:
 
                                 #fortnox API Update
                                 fn_result = fn_customer.fn_update_customer(str(WC['id']) , self.fn_customer_obj_u(WC))
-                                print('Customer Update:')
-                                print(fn_result)
+                                # print('Customer Update:')
+                                # print(fn_result)
 
                                 
                         else: # Does not exist in local, but exist in woocomerce
@@ -997,8 +1005,8 @@ class woo_fn_sync:
 
                             # Fortnox API Create
                             fn_result = fn_customer.fn_create_customer(self.fn_customer_obj(WC))
-                            print('Customer Created:')
-                            print(fn_result)
+                            # print('Customer Created:')
+                            # print(fn_result)
                     
                     for lp in local_ids:
                         if local_ids[lp]['exist'] == False: # Delete products which are not available in WooCommerce
@@ -1006,8 +1014,8 @@ class woo_fn_sync:
 
                             # Fortnox API Delete
                             fn_result = fn_customer.fn_delete_customer(str(local_ids[lp]['id']))
-                            print('Customer Update:')
-                            print(fn_result)
+                            # print('Customer Update:')
+                            # print(fn_result)
                     
                 except DatabaseError as e:
                     print('Database error: ' + str(e))

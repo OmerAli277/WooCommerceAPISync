@@ -136,9 +136,6 @@ class WooOrderItem(models.Model):
     variant = models.ForeignKey(to='WooVariant', null=True, blank=True, on_delete=models.SET_NULL)
 
 
-
-
-
 class WooProduct(models.Model):
     product_id = models.IntegerField(unique=True, default=0)
     parent_id = models.IntegerField(null=True, blank=True)
@@ -214,8 +211,6 @@ class WooVariant(models.Model):
     shipping_class_id = models.IntegerField(null=True, blank=True)
     meta_data = models.ManyToManyField(to='WooMetaData', blank=True)
     date_created = models.DateTimeField(null=True, blank=True)
-
-
 
 
 #User settings

@@ -284,7 +284,7 @@ class woo_fn_sync:
 
         row_items = []
         for item in  WO['line_items']:
-            row_items.push({
+            row_items.append({
                 {
                     # "AccountNumber": 3011,
                     "ArticleNumber": item['product_id'],
@@ -421,7 +421,7 @@ class woo_fn_sync:
 
         row_items = []
         for item in  WO['line_items']:
-            row_items.push({
+            row_items.append({
                 {
                     # "AccountNumber": 3011,
                     "ArticleNumber": item['product_id'],
@@ -700,31 +700,31 @@ class woo_fn_sync:
                                         # print(result)
 
                                 else: # Does not exist in local, but exist in woocomerce
-                                new_order = WooOrder.objects.create(
-                                    order_id = WO['id'],
-                                    parent_id = WO['parent_id'],
-                                    number = WO['number'],
-                                    order_key =  WO['order_key'],
-                                    created_via =  WO['created_via'],
-                                    version =  WO['version'],
-                                    status =  WO['status'],
-                                    currency =  WO['currency'],
-                                    discount_total = WO['discount_total'],
-                                    discount_tax =  WO['discount_tax'],
-                                    shipping_total =  WO['shipping_total'],
-                                    shipping_tax =  WO['shipping_tax'],
-                                    cart_tax =  WO['cart_tax'],
-                                    total =  WO['total'],
-                                    total_tax =  WO['total_tax'],
-                                    prices_include_tax =  WO['prices_include_tax'],
-                                    payment_method =  WO['payment_method'],
-                                    payment_method_title = WO['payment_method_title'],
-                                    transaction_id =  WO['transaction_id'],
+                                    new_order = WooOrder.objects.create(
+                                        order_id = WO['id'],
+                                        parent_id = WO['parent_id'],
+                                        number = WO['number'],
+                                        order_key =  WO['order_key'],
+                                        created_via =  WO['created_via'],
+                                        version =  WO['version'],
+                                        status =  WO['status'],
+                                        currency =  WO['currency'],
+                                        discount_total = WO['discount_total'],
+                                        discount_tax =  WO['discount_tax'],
+                                        shipping_total =  WO['shipping_total'],
+                                        shipping_tax =  WO['shipping_tax'],
+                                        cart_tax =  WO['cart_tax'],
+                                        total =  WO['total'],
+                                        total_tax =  WO['total_tax'],
+                                        prices_include_tax =  WO['prices_include_tax'],
+                                        payment_method =  WO['payment_method'],
+                                        payment_method_title = WO['payment_method_title'],
+                                        transaction_id =  WO['transaction_id'],
 
-                                    date_created = WO['date_created'],
-                                    date_modified = WO['date_modified'],
-                                    date_paid = WO['date_paid'],
-                                    date_completed = WO['date_completed'])
+                                        date_created = WO['date_created'],
+                                        date_modified = WO['date_modified'],
+                                        date_paid = WO['date_paid'],
+                                        date_completed = WO['date_completed'])
 
                                 # Fortnox API Update
                                 if WO['status'] != "completed" :

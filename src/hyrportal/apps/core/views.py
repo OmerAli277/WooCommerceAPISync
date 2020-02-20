@@ -215,7 +215,7 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
 @login_required()
 def fortnoxauth(request):
     if request.method == 'GET':
-        if request.user.is_seller and not request.user.account_type:
+        if not request.user.account_type:
             message = ""
             return render(request, 'customer/fortnoxauth.html',  {'message' : message})
         else:

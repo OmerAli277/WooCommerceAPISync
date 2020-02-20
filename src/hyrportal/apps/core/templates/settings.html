@@ -13,7 +13,7 @@
 
             {% if request.user.is_superuser %}
                 <div class="card-block">
-                    <form>
+                    <form method="post">
                         {% csrf_token %}
 
                         <div class="form-row">
@@ -43,6 +43,14 @@
                           </div>
                         </div>
 
+                         <div class="form-row">
+                          <div class="form-group col-md-6 mb-0">
+                            {{ form.customer_no|as_crispy_field }}
+                          </div>
+                        </div>
+
+
+                         <input type="submit" class="btn btn-primary"  value="Update">
                     </form>
 
                 </div>

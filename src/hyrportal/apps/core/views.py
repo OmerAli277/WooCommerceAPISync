@@ -41,28 +41,13 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 @login_required()
 def connect(request):
     if request.user.is_superuser is False:
-        return render(request, 'customer/connect.html')
+        basetemplate = 'auth1.html'
     else:
-        return render(request, '401.html')
+        basetemplate = 'auth.html'
+
+    return render(request, 'customer/connect.html' , {'template_base' : basetemplate })
 
 
-
-# class LoginView(View):
-#     def get(self, request):
-#         if request.method == 'POST':
-#             email = request.POST.get('InputEmail1')
-#             password = request.POST.get('InputPassword')
-#             user = authenticate(request, username = email, password= password)
-#             if user is not None:
-#                 if auth.login(request, user):
-#                     request.session['is_login'] = 'true'
-#                     return redirect('/')
-#                 else:
-#                     return render(request, '401.html')
-#             else:
-#                 return render(request, '401.html')
-#         else:
-#             return render(request, '401.html')
 
 #handles the request for Logging in of customer or superuser
 def request(request):
@@ -146,16 +131,14 @@ class CustomerSettingsView(UpdateView):
         'address',
         'company_vat',
         'zip_code',
-        'city'
+        'city',
+        'customer_no'
     ]
 
     success_url = reverse_lazy('customer-settings')
 
     def get_object(self, *args, **kwargs):
-         if User.is_superuser is False:
-            return self.request.user
-         else:
-             return None
+        return self.request.user
 
 #Decorator to check if the user is completing requirements for a certian action
 def superuser_required():
@@ -178,6 +161,7 @@ class SettingsView(UpdateView):
         'address',
         'company_vat',
         'zip_code',
+        'customer_no',
         'city'
     ]
 
@@ -282,5 +266,21 @@ def fortnoxauth(request):
             return render(request, 'customer/fortnoxauth.html',  {'message' : message})
 
 
+# class LoginView(View):
+#     def get(self, request):
+#         if request.method == 'POST':
+#             email = request.POST.get('InputEmail1')
+#             password = request.POST.get('InputPassword')
+#             user = authenticate(request, username = email, password= password)
+#             if user is not None:
+#                 if auth.login(request, user):
+#                     request.session['is_login'] = 'true'
+#                     return redirect('/')
+#                 else:
+#                     return render(request, '401.html')
+#             else:
+#                 return render(request, '401.html')
+#         else:
+#             return render(request, '401.html')
 
 

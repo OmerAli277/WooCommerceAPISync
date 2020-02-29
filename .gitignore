@@ -5,3 +5,4 @@ env/
 venv/
 src/celerybeat.pid
 src/celerybeat-schedule
+.pyc

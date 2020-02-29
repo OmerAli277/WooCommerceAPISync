@@ -4,6 +4,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.http import HttpResponse
 import requests
 from hyrportal import settings
+
+# from src.hyrportal.apps.core.visma_client import visma_customer_api
 from .models import WooCustomer, WooOrder, WooProduct, User, fortnoxApiDetails
 import json
 from django.shortcuts import redirect
@@ -48,6 +50,34 @@ def connect(request):
     return render(request, 'customer/connect.html' , {'template_base' : basetemplate })
 
 
+def callback(request):
+    client_id = "hyr1"
+    print("In visma_authentication function")
+    user_authentication = None
+    try:
+        r = requests.get(
+            url="https://identity.vismaonline.com/connect/authorize",
+            headers = {
+                "Access-Token"  : client_id,
+                "redirect_uri"  : "http://127.0.0.1:8000/callback",
+                "scope"         : "ea:api%20ea:sales",
+                "response_type" : "code"
+            },
+        )
+        print('Response HTTP Status Code : {status_code}'.format(status_code=r.status_code))
+        # print('Response HTTP Response Body : {content}'.format(content=r.content))
+        user_authentication = json.loads(r.content)
+        print("Printing user_authentication" + str(user_authentication))
+    except requests.exceptions.RequestException as e:
+        print('fn_list_of_customer HTTP Request failed')
+    # return user_authentication
+
+    # print("In callback function")
+    # visma = visma_customer_api(client_id)
+    # visma.visma_authentication()
+
+
+    return render(request, 'registration/signup.html')
 
 #handles the request for Logging in of customer or superuser
 def request(request):

@@ -33,6 +33,7 @@ urlpatterns = [
 	# path('login/request/', views.request, name='request'),
 	# path('', RedirectView.as_view(pattern_name='settings', permanent=False)),
 
+	path('callback/' , views.callback , name='callback'),
 	path('', views.home_page , name='home_page'),
     path('connect/', views.connect, name='connect'),
 	path('fortnoxauth/', views.fortnoxauth, name='fortnoxauth'),

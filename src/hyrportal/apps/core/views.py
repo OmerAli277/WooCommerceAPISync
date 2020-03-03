@@ -125,7 +125,7 @@ def signup(request):
                                                                 sales_account_25 = 0,
                                                                 sales_account_12  = 0,
                                                                 sales_account_6  = 0,
-                                                                freight_account = None )
+                                                                freight_account = "Null" )
 
 
                 user.save()
@@ -154,11 +154,6 @@ def home_page(request):
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     else:
         if request.user.is_superuser:
-            fortnox_Settings = fortnoxSettings.objects.create(
-                                                                seller_id = request.user,
-                                                                sales_account_25 = 0,
-                                                                sales_account_12  = 0,
-                                                                sales_account_6  = 0)
             return redirect('settings')
         else:
             return redirect('customer-settings')

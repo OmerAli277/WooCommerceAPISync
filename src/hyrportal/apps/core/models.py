@@ -281,11 +281,11 @@ class WooCommerceDetails(models.Model):
 
 class fortnoxSettings(models.Model):
     seller_id = models.OneToOneField('User', on_delete=models.CASCADE,  primary_key=True , unique=True)
-    start_date = models.DateTimeField(null=True, blank=True , default=None)
+    start_date = models.DateTimeField(null=True, blank=True , default=None , Null=True)
     sales_account_25 = models.IntegerField(null=True, blank=True)
     sales_account_12 = models.IntegerField(null=True, blank=True)
     sales_account_6 = models.IntegerField(null=True, blank=True)
-    freight_account = models.CharField(max_length=255, blank=True , default=None)
+    freight_account = models.CharField(max_length=255, blank=True , default=None , Null=True)
 
 
 #store transactions in DB in order to keep log of what has been processed for user

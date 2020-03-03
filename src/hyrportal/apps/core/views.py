@@ -1,12 +1,13 @@
-from django.contrib.auth import logout, hashers, login 
+from django.contrib.auth import logout, hashers, login
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.http import HttpResponse
 import requests
+from django.template import RequestContext
 from hyrportal import settings
 
 from hyrportal.apps.core.visma_client import visma_customer_api
-from .models import WooCustomer, WooOrder, WooProduct, User, fortnoxApiDetails
+from .models import WooCustomer, WooOrder, WooProduct, User, fortnoxApiDetails , fortnoxSettings
 import json
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -118,6 +119,15 @@ def signup(request):
                                                 address=Address, city=city, zip_code=zipCode, customer_name = CustomerName,
                                                 customer_no=customerNum , company_vat = comapanyVat, is_seller=True)
 
+                fortnox_Settings = fortnoxSettings.objects.create(
+                                                                seller_id = user,
+                                                                start_date = None,
+                                                                sales_account_25 = 0,
+                                                                sales_account_12  = 0,
+                                                                sales_account_6  = 0,
+                                                                freight_account = None )
+
+
                 user.save()
                 return redirect('/')
             else:
@@ -152,6 +162,32 @@ def home_page(request):
 
 #Display the data of the current user currently loged in
 # @login_required()
+class FortnoxSettingView(UpdateView):
+    print("IN FortnoxSettingView")
+    template_name = 'customer/connect.html'
+    model = fortnoxSettings
+    template_base_user = 'auth1.html'
+    template_base_superuser = 'auth.html'
+    fields = [
+        "start_date",
+        "sales_account_25",
+        "sales_account_12",
+        "sales_account_6",
+        "freight_account"
+    ]
+    success_url = reverse_lazy('fortnox-update')
+
+    def get_context_data(self, **context):
+        context = locals()
+        if self.request.user.is_superuser is False:
+            context['template_base'] = self.template_base_user
+        else:
+            context['template_base'] = self.template_base_superuser
+        return context
+
+    def get_object(self, *args, **kwargs):
+        return self.model.objects.get(seller_id = self.request.user)
+
 class CustomerSettingsView(UpdateView):
     template_name = 'customer/settings.html'
     model = User
@@ -272,24 +308,24 @@ def fortnoxauth(request):
             if data.get('ErrorInformation') is not None:
                 message = data['ErrorInformation']['Message']
                 return render(request, 'customer/fortnoxauth.html',  {'message' : message})
-                
+
             elif data.get('Authorization'):
                 data = json.loads(r.content)
                 access_token = data['Authorization']['AccessToken']
-            
+
                 results = fortnoxApiDetails.objects.create(
                     seller_id = request.user.id,
                     client_secret = client_secret,
                     access_token = access_token,
                     authorization_Code = authorization,
                 )
-                
+
                 user1 = User.objects.get(id=request.user.id)
                 user1.account_type = 'fortnox'
                 user1.save()
 
                 return redirect('connect')
- 
+
         except requests.exceptions.RequestException as e:
             print('fn_authentication HTTP Request failed')
             message = "Internal Error !! try again"

@@ -35,11 +35,15 @@ urlpatterns = [
 
 	path('callback/' , views.callback , name='callback'),
 	path('', views.home_page , name='home_page'),
-    path('connect/', views.connect, name='connect'),
+
+    path('connect/', views.FortnoxSettingView.as_view(), name='connect'),
+
 	path('fortnoxauth/', views.fortnoxauth, name='fortnoxauth'),
 	path('settings/', views.SettingsView.as_view(), name='settings'),
 
 	path('customer-settings/', views.CustomerSettingsView.as_view(), name = "customer-settings"),
+
+	path('connect/fortnox/update/' , views.FortnoxSettingView.as_view(), name='fortnox-update'),
 
     path('users/', views.UserListView.as_view(), name='user-list'),
 

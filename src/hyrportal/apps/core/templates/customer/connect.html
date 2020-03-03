@@ -1,7 +1,7 @@
 
 {% extends template_base %}
+{% load crispy_forms_tags %}
 {% block title %}Connect{% endblock %}
-
 {% block content %}
 
 {% if request.user.account_type %}
@@ -21,31 +21,34 @@
                             <a href="{% url 'callback' %}" >Visma</a>
                         </div>
                     </div>
-                    <form>
+                    <form method="POST" action="fortnox/update/">
 
-                        <div class="form-group  col-md-6">
-                            <input type="text" name="Sales_Account_25%" class="form-control" placeholder="Sales Account 25%" >
-                        </div>
+                        {% csrf_token %}
 
-                        <div class="form-group col-md-6">
-                            <input type="text" name="Sales_Account_12%" class="form-control" placeholder="Sales Account 12%">
-                        </div>
+                        {{ form }}
+                        <!--<div class="form-group  col-md-6">-->
+                            <!--<input type="number" id="account_25" name="account_25" class="form-control" placeholder="Sales Account 25%" >-->
+                        <!--</div>-->
 
-                        <div class="form-group col-md-6">
-                            <input type="text" name="Sales_Account_6%" class="form-control" placeholder="Sales Account 6%">
-                        </div>
+                        <!--<div class="form-group col-md-6">-->
+                            <!--<input type="number" id="account_12" name="account_12" class="form-control" placeholder="Sales Account 12%">-->
+                        <!--</div>-->
 
-                        <div class="form-group col-md-6">
-                            <input type="text" name="Freight_Account" class="form-control" placeholder="Freight Account">
-                        </div>
+                        <!--<div class="form-group col-md-6">-->
+                            <!--<input type="number" id="account_6" name="account_6" class="form-control" placeholder="Sales Account 6%">-->
+                        <!--</div>-->
 
-                        <div class="form-group col-md-6">
-                            <input type="text" name="Start_Date" class="form-control" placeholder="Start Date">
-                        </div>
+                        <!--<div class="form-group col-md-6">-->
+                            <!--<input type="text" id="freight_account" name="freight_account" class="form-control" placeholder="Freight Account">-->
+                        <!--</div>-->
 
-                        <div class="form-group col-md-6">
+                        <!--<div class="form-group col-md-6">-->
+                            <!--<input type="date" id="start_date" name="start_dates" class="form-control" placeholder="Start Date">-->
+                        <!--</div>-->
+
+                        <!--<div class="form-group col-md-6">-->
                         <input type="submit" class="btn btn-primary" value="Update">
-                        </div>
+                        <!--</div>-->
 
                     </form>
                 </div>

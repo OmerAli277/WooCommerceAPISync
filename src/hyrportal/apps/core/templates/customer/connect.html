@@ -1,5 +1,5 @@
 
-{% extends template_base %}
+{% extends 'auth.html' %}
 {% load crispy_forms_tags %}
 {% block title %}Connect{% endblock %}
 {% block content %}
@@ -25,7 +25,26 @@
 
                         {% csrf_token %}
 
-                        {{ form }}
+                         <div class="form-group col-md-6">
+                              {{ form.sales_account_25|as_crispy_field }}
+                         </div>
+
+                        <div class="form-group col-md-6">
+                              {{ form.sales_account_12|as_crispy_field }}
+                         </div>
+
+                        <div class="form-group col-md-6">
+                              {{ form.sales_account_6|as_crispy_field }}
+                         </div>
+
+                        <div class="form-group col-md-6">
+                              {{ form.start_date|as_crispy_field }}
+                         </div>
+
+                        <div class="form-group col-md-6">
+                              {{ form.freight_account|as_crispy_field }}
+                         </div>
+
                         <!--<div class="form-group  col-md-6">-->
                             <!--<input type="number" id="account_25" name="account_25" class="form-control" placeholder="Sales Account 25%" >-->
                         <!--</div>-->

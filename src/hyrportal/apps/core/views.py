@@ -125,7 +125,7 @@ def signup(request):
                                                                 sales_account_25 = 0,
                                                                 sales_account_12  = 0,
                                                                 sales_account_6  = 0,
-                                                                freight_account = None )
+                                                                freight_account = "Null" )
 
 
                 user.save()
@@ -177,13 +177,13 @@ class FortnoxSettingView(UpdateView):
     ]
     success_url = reverse_lazy('fortnox-update')
 
-    def get_context_data(self, **context):
-        context = locals()
-        if self.request.user.is_superuser is False:
-            context['template_base'] = self.template_base_user
-        else:
-            context['template_base'] = self.template_base_superuser
-        return context
+    # def get_context_data(self, **context):
+    #     context = locals()
+    #     if self.request.user.is_superuser is False:
+    #         context['template_base'] = self.template_base_user
+    #     else:
+    #         context['template_base'] = self.template_base_superuser
+    #     return context
 
     def get_object(self, *args, **kwargs):
         return self.model.objects.get(seller_id = self.request.user)

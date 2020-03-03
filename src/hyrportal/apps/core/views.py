@@ -115,9 +115,17 @@ def signup(request):
             CustomerName = request.POST.get('CustomerName')
 
             if password2 == password1:
-                user = User.objects.create_user(username=user_name, email=email ,password=password1 , company_name=companyName,
-                                                address=Address, city=city, zip_code=zipCode, customer_name = CustomerName,
-                                                customer_no=customerNum , company_vat = comapanyVat, is_seller=True)
+                user = User.objects.create_user(username=user_name,
+                                                email=email,
+                                                password=password1,
+                                                company_name=companyName,
+                                                address=Address,
+                                                city=city,
+                                                zip_code=zipCode,
+                                                customer_name = CustomerName,
+                                                customer_no=customerNum ,
+                                                company_vat = comapanyVat,
+                                                is_seller=True)
 
                 fortnox_Settings = fortnoxSettings.objects.create(
                                                                 seller_id = user,

@@ -170,7 +170,8 @@ class woo_fn_sync:
         # access_token = 'c40acba2-3eb9-4d84-9bea-497ea5959542'
 
         try: 
-            users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
+            # users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
+            users_woo = User.objects.filter(account_type='fortnox')
 
             for w_user in users_woo:
                 start_date, sales_account_25, sales_account_12, sales_account_6, freight_account = self.fortnox_settings(w_user.id)
@@ -658,7 +659,8 @@ class woo_fn_sync:
         # access_token = 'c40acba2-3eb9-4d84-9bea-497ea5959542'
 
         try: 
-            users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
+            # users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
+            users_woo = User.objects.filter(account_type='fortnox')
 
             for w_user in users_woo:
                 client_secret, access_token = self.fortnox_authentication(w_user.id)
@@ -930,7 +932,8 @@ class woo_fn_sync:
         # access_token = 'c40acba2-3eb9-4d84-9bea-497ea5959542'
 
         try: 
-            users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
+            # users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
+            users_woo = User.objects.filter(account_type='fortnox')
 
             for w_user in users_woo:
                 client_secret, access_token = self.fortnox_authentication(w_user.id)

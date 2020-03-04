@@ -7,7 +7,8 @@ from django.template import RequestContext
 from hyrportal import settings
 
 from hyrportal.apps.core.visma_client import visma_customer_api
-from .models import WooCustomer, WooOrder, WooProduct, User, fortnoxApiDetails , fortnoxSettings
+from hyrportal.apps.core.woo_task import woo_fn_sync
+from .models import WooCustomer, WooOrder, WooProduct, User, fortnoxApiDetails , fortnoxSettings , WooCommerceDetails
 import json
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -160,6 +161,16 @@ def home_page(request):
         return redirect('%s?next=%s' % (settings.LOGIN_URL, request.path))
     else:
         if request.user.is_superuser:
+            try:
+                fortnoxSettings.objects.get(seller_id = request.user)
+            except:
+                fortnox_Settings = fortnoxSettings.objects.create(
+                                                                seller_id = request.user,
+                                                                start_date = None,
+                                                                sales_account_25 = 0,
+                                                                sales_account_12  = 0,
+                                                                sales_account_6  = 0,
+                                                                freight_account = "Null" )
             return redirect('settings')
         else:
             return redirect('customer-settings')
@@ -286,10 +297,17 @@ class UserDeleteView(LoginRequiredMixin, DeleteView):
 
 @login_required()
 def fortnoxauth(request):
+    if request.user.is_superuser is False:
+        basetemplate = 'auth1.html'
+    else:
+        basetemplate = 'auth.html'
+
+
+
     if request.method == 'GET':
         if not request.user.account_type:
             message = ""
-            return render(request, 'customer/fortnoxauth.html',  {'message' : message})
+            return render(request, 'customer/fortnoxauth.html',  {'message' : message , 'template_base' : basetemplate})
         else:
             return redirect('connect')
 
@@ -313,7 +331,7 @@ def fortnoxauth(request):
 
             if data.get('ErrorInformation') is not None:
                 message = data['ErrorInformation']['Message']
-                return render(request, 'customer/fortnoxauth.html',  {'message' : message})
+                return render(request, 'customer/fortnoxauth.html',  {'message' : message , 'template_base' : basetemplate})
 
             elif data.get('Authorization'):
                 data = json.loads(r.content)
@@ -335,7 +353,7 @@ def fortnoxauth(request):
         except requests.exceptions.RequestException as e:
             print('fn_authentication HTTP Request failed')
             message = "Internal Error !! try again"
-            return render(request, 'customer/fortnoxauth.html',  {'message' : message})
+            return render(request, 'customer/fortnoxauth.html',  {'message' : message , 'template_base' : basetemplate})
 
 
 # class LoginView(View):

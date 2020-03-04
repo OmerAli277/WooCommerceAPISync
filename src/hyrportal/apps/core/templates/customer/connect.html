@@ -76,19 +76,19 @@
 </div>
 
 {%else%}
-<div class="row" style="margin-bottom: 30px;">
-  <div class="col-sm-12">
-    <h3 class="font-weight-bold">You are not connected.</h3>
-      <h5>Please Connect: </h5>
-  </div>
-</div>
-<div class="row">
-  <div class="col-sm-6">
-    <a href="{% url 'fortnoxauth' %}" ><button type="button" class="btn btn-success">Fortnox</button></a>
-  </div>
-  <div class="col-sm-6">
-    <a href="#"><button type="button" class="btn btn-success">Visma</button></a>
-  </div>
-</div>
+    <div class="row" style="margin-bottom: 30px;">
+      <div class="col-sm-12">
+        <h3 class="font-weight-bold">You are not connected.</h3>
+          <h5>Please Connect: </h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6">
+        <a href="{% url 'fortnoxauth' %}" ><button type="button" class="btn btn-success">Fortnox</button></a>
+      </div>
+      <div class="col-sm-6">
+        <a href="#"><button type="button" class="btn btn-success">Visma</button></a>
+      </div>
+    </div>
 {%endif%}
 {% endblock %}

@@ -2,7 +2,7 @@ import json
 import requests
 from woocommerce import API
 # from .models import User, WooCustomer, WooOrder, WooProduct, WooVariant, fortnoxApiDetails, WooCustomerShipping, WooCustomerBilling
-from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, WooCustomerShipping, WooCustomerBilling ,fortnoxApiDetails
+from hyrportal.apps.core.models import User, WooCustomer, WooOrder, WooOrderItem, WooProduct, WooVariant, WooCustomerShipping, WooCustomerBilling ,fortnoxApiDetails, fortnoxSettings
 from hyrportal.apps.core.fn_client import fn_article_api, fn_customer_api, fn_invoice_api, fn_invoice_payment_api
 from django.db import DatabaseError
 
@@ -30,9 +30,29 @@ class woo_fn_sync:
             print('Database fortnoxApiDetails error: '+ str(e))
 
         return client_secret, access_token
-    
+
+    def fortnox_settings(self, seller_id1):
+        start_date = None
+        sales_account_25 = None
+        sales_account_12 = None
+        sales_account_6 = None
+        freight_account = None
+
+        try:
+            fn_object = fortnoxSettings.objects.get(seller_id = seller_id1)
+            start_date = fn_object.start_date
+            sales_account_25 = fn_object.sales_account_25
+            sales_account_12 = fn_object.sales_account_12
+            sales_account_6 = fn_object.sales_account_6
+            freight_account = fn_object.freight_account
+
+        except DatabaseError as e:
+            print('Database fortnoxApiDetails error: '+ str(e))
+
+        return start_date, sales_account_25, sales_account_12, sales_account_6, freight_account
+
     # Article
-    def fn_article_obj(self, WP):
+    def fn_article_obj(self, WP, sale_account):
 
         if WP['short_description'] != "":
             WP['short_description'] = "Kindly provide description."
@@ -61,7 +81,7 @@ class woo_fn_sync:
                 # "PurchasePrice": 0,
                 "QuantityInStock": WP['stock_quantity'],
                 # "ReservedQuantity": 0,
-                # "SalesAccount": 3011,
+                "SalesAccount": sale_account,
                 # "StockGoods": false,
                 # "StockPlace": null,
                 # "StockValue": 0,
@@ -87,7 +107,7 @@ class woo_fn_sync:
 
         return json.dumps(fn_article_object)
 
-    def fn_article_obj_u(self, WP):
+    def fn_article_obj_u(self, WP, sale_account):
 
         if WP['short_description'] != "":
             WP['short_description'] = "Kindly provide description."
@@ -116,7 +136,7 @@ class woo_fn_sync:
                 # "PurchasePrice": 0,
                 "QuantityInStock": WP['stock_quantity'],
                 # "ReservedQuantity": 0,
-                # "SalesAccount": 3011,
+                "SalesAccount": sale_account,
                 # "StockGoods": false,
                 # "StockPlace": null,
                 # "StockValue": 0,
@@ -153,127 +173,138 @@ class woo_fn_sync:
             users_woo = User.objects.filter(account_type='fortnox', is_seller=True)
 
             for w_user in users_woo:
-                client_secret, access_token = self.fortnox_authentication(w_user.id)
+                start_date, sales_account_25, sales_account_12, sales_account_6, freight_account = self.fortnox_settings(w_user.id)
 
-                fn_article = fn_article_api(access_token, client_secret)
+                if start_date:
+                    client_secret, access_token = self.fortnox_authentication(w_user.id)
 
-                r = self.wcapi.get("products")
-                products = r.json()
-            
-                try:
-                    local_products = WooProduct.objects.values('product_id')
+                    fn_article = fn_article_api(access_token, client_secret)
 
-                    local_ids = {}
-                    for lp in local_products:
-                        local_ids[lp['product_id']] = {'exist': False, 'id':lp['product_id']}
+                    r = self.wcapi.get("products")
+                    products = r.json()
+                
+                    try:
+                        local_products = WooProduct.objects.values('product_id')
 
-                    for wp in products:
-                        if local_ids.get(wp['id']) != None: # Exist in both local and woocomerce
-                            local_ids[wp['id']]['exist'] = True
-                            local_p = WooProduct.objects.get(product_id=wp['id'])
-                            if (local_p != None) and (wp['date_modified'] != local_p.date_modified):
-                                # Updata the local Product
-                                local_p.product_id = wp['id'] 
-                                local_p.parent_id = wp['parent_id']
-                                local_p.name = wp['name']
-                                local_p.slug = wp['slug'] 
-                                local_p.permalink = wp['permalink'] 
-                                local_p.description = wp['description'] 
-                                local_p.short_description = wp['short_description'] 
-                                local_p.sku = wp['sku']
-                                local_p.type = wp['type'] 
-                                local_p.price_html  = wp['price_html']  
-                                local_p.status = wp['status']
-                                local_p.catalog_visibility = wp['catalog_visibility'] 
-                                local_p.stock_quantity = wp['stock_quantity']
-                                local_p.stock_status = wp['stock_status']
-                                local_p.tax_status = wp['tax_status']
-                                local_p.tax_class = wp['tax_class']
-                                local_p.shipping_class = wp['shipping_class'] 
-                                local_p.shipping_class_id = wp['shipping_class_id'] 
-                                local_p.backorders = wp['backorders']
+                        local_ids = {}
+                        for lp in local_products:
+                            local_ids[lp['product_id']] = {'exist': False, 'id':lp['product_id']}
 
-                                local_p.price = wp['price']
-                                local_p.regular_price = wp['regular_price']
-                                local_p.sale_price = wp['sale_price']
-                                local_p.total_sales = wp['total_sales'] 
+                        for wp in products:
+                            sale_account = None
+                            if wp['tax_class'] == 25:
+                                sale_account = sales_account_25
+                            elif wp['tax_class'] == 12:
+                                sale_account = sales_account_12
+                            elif wp['tax_class'] == 6:
+                                sale_account = sales_account_6
+
+                            if local_ids.get(wp['id']) != None: # Exist in both local and woocomerce
+                                local_ids[wp['id']]['exist'] = True
+                                local_p = WooProduct.objects.get(product_id=wp['id'])
+                                if (local_p != None) and (wp['date_modified'] != local_p.date_modified):
+                                    # Updata the local Product
+                                    local_p.product_id = wp['id'] 
+                                    local_p.parent_id = wp['parent_id']
+                                    local_p.name = wp['name']
+                                    local_p.slug = wp['slug'] 
+                                    local_p.permalink = wp['permalink'] 
+                                    local_p.description = wp['description'] 
+                                    local_p.short_description = wp['short_description'] 
+                                    local_p.sku = wp['sku']
+                                    local_p.type = wp['type'] 
+                                    local_p.price_html  = wp['price_html']  
+                                    local_p.status = wp['status']
+                                    local_p.catalog_visibility = wp['catalog_visibility'] 
+                                    local_p.stock_quantity = wp['stock_quantity']
+                                    local_p.stock_status = wp['stock_status']
+                                    local_p.tax_status = wp['tax_status']
+                                    local_p.tax_class = wp['tax_class']
+                                    local_p.shipping_class = wp['shipping_class'] 
+                                    local_p.shipping_class_id = wp['shipping_class_id'] 
+                                    local_p.backorders = wp['backorders']
+
+                                    local_p.price = wp['price']
+                                    local_p.regular_price = wp['regular_price']
+                                    local_p.sale_price = wp['sale_price']
+                                    local_p.total_sales = wp['total_sales'] 
+                                    
+                                    local_p.featured = wp['featured']
+                                    local_p.on_sale = wp['on_sale']
+                                    local_p.purchasable = wp['purchasable'] 
+                                    local_p.virtual =wp['virtual']
+                                    local_p.downloadable =wp['downloadable']  
+                                    local_p.manage_stock = wp['manage_stock'] 
+                                    local_p.backorders_allowed= wp['backorders_allowed']
+                                    local_p.backordered = wp['backordered']
+                                    local_p.sold_individually = wp['sold_individually'] 
+                                    local_p.shipping_required = wp['shipping_required']
+                                    local_p.save()
+
+                                    # fortnox API Update
+                                    result = fn_article.fn_update_article(str(wp['id']), self.fn_article_obj_u(wp, sale_account))
+                                    # print('Arctile Updated:')
+                                    # print(result)
+
+                            else: # Does not exist in local, but exist in woocomerce
+                                new_product = WooProduct.objects.create(
+                                    product_id = wp['id'] ,
+                                    parent_id = wp['parent_id'], 
+                                    name = wp['name'], 
+                                    slug = wp['slug'] ,
+                                    permalink = wp['permalink'], 
+                                    description = wp['description'], 
+                                    short_description = wp['short_description'], 
+                                    sku = wp['sku'], 
+                                    type = wp['type'], 
+                                    price_html  = wp['price_html'] , 
+                                    status = wp['status'],
+                                    catalog_visibility = wp['catalog_visibility'], 
+                                    stock_quantity = wp['stock_quantity'], 
+                                    stock_status = wp['stock_status'], 
+                                    tax_status = wp['tax_status'], 
+                                    tax_class = wp['tax_class'],
+                                    shipping_class = wp['shipping_class'], 
+                                    shipping_class_id = wp['shipping_class_id'], 
+                                    backorders = wp['backorders'], 
+
+                                    price = wp['price'], 
+                                    regular_price = wp['regular_price'], 
+                                    sale_price = wp['sale_price'], 
+                                    total_sales = wp['total_sales'], 
+                                    
+                                    featured = wp['featured'], 
+                                    on_sale = wp['on_sale'], 
+                                    purchasable = wp['purchasable'], 
+                                    virtual =wp['virtual'],
+                                    downloadable =wp['downloadable'] , 
+                                    manage_stock = wp['manage_stock'], 
+                                    backorders_allowed= wp['backorders_allowed'] ,
+                                    backordered = wp['backordered'], 
+                                    sold_individually = wp['sold_individually'], 
+                                    shipping_required = wp['shipping_required'],
+                                    # shipping_taxable= wp['shipping_taxable']
+                                    # meta_data = wp['meta_data'], 
+                                    date_created = wp['date_created']
+                                    )
                                 
-                                local_p.featured = wp['featured']
-                                local_p.on_sale = wp['on_sale']
-                                local_p.purchasable = wp['purchasable'] 
-                                local_p.virtual =wp['virtual']
-                                local_p.downloadable =wp['downloadable']  
-                                local_p.manage_stock = wp['manage_stock'] 
-                                local_p.backorders_allowed= wp['backorders_allowed']
-                                local_p.backordered = wp['backordered']
-                                local_p.sold_individually = wp['sold_individually'] 
-                                local_p.shipping_required = wp['shipping_required']
-                                local_p.save()
-
-                                # fortnox API Update
-                                result = fn_article.fn_update_article(str(wp['id']), self.fn_article_obj_u(wp))
-                                # print('Arctile Updated:')
+                                # Fortnox API Create
+                                result = fn_article.fn_create_article(self.fn_article_obj(wp, sale_account))
+                                # print('Article created:')
                                 # print(result)
 
-                        else: # Does not exist in local, but exist in woocomerce
-                            new_product = WooProduct.objects.create(
-                                product_id = wp['id'] ,
-                                parent_id = wp['parent_id'], 
-                                name = wp['name'], 
-                                slug = wp['slug'] ,
-                                permalink = wp['permalink'], 
-                                description = wp['description'], 
-                                short_description = wp['short_description'], 
-                                sku = wp['sku'], 
-                                type = wp['type'], 
-                                price_html  = wp['price_html'] , 
-                                status = wp['status'],
-                                catalog_visibility = wp['catalog_visibility'], 
-                                stock_quantity = wp['stock_quantity'], 
-                                stock_status = wp['stock_status'], 
-                                tax_status = wp['tax_status'], 
-                                tax_class = wp['tax_class'],
-                                shipping_class = wp['shipping_class'], 
-                                shipping_class_id = wp['shipping_class_id'], 
-                                backorders = wp['backorders'], 
 
-                                price = wp['price'], 
-                                regular_price = wp['regular_price'], 
-                                sale_price = wp['sale_price'], 
-                                total_sales = wp['total_sales'], 
-                                
-                                featured = wp['featured'], 
-                                on_sale = wp['on_sale'], 
-                                purchasable = wp['purchasable'], 
-                                virtual =wp['virtual'],
-                                downloadable =wp['downloadable'] , 
-                                manage_stock = wp['manage_stock'], 
-                                backorders_allowed= wp['backorders_allowed'] ,
-                                backordered = wp['backordered'], 
-                                sold_individually = wp['sold_individually'], 
-                                shipping_required = wp['shipping_required'],
-                                # shipping_taxable= wp['shipping_taxable']
-                                # meta_data = wp['meta_data'], 
-                                date_created = wp['date_created']
-                                )
-                            
-                            # Fortnox API Create
-                            result = fn_article.fn_create_article(self.fn_article_obj(wp))
-                            # print('Article created:')
-                            # print(result)
+                        for lp in local_ids:
+                            if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
+                                WooProduct.objects.filter(product_id=local_ids[lp]['id']).delete()
 
+                                # Fortnox API Create
+                                result = fn_article.fn_delete_article(str(local_ids[lp]['id']))
+                                # print('Article delete:')
+                                # print(result)
 
-                    for lp in local_ids:
-                        if local_ids[lp]['exist'] == False: # Delete products which are not avialable in woocommerce
-                            WooProduct.objects.filter(product_id=local_ids[lp]['id']).delete()
-
-                            # Fortnox API Create
-                            result = fn_article.fn_delete_article(str(local_ids[lp]['id']))
-                            # print('Article delete:')
-                            # print(result)
-
-                except DatabaseError as e:
-                    print('Database error: ' + str(e))
+                    except DatabaseError as e:
+                        print('Database error: ' + str(e))
 
         except DatabaseError as e:
             print('Database error: ' + str(e))
@@ -756,6 +787,9 @@ class woo_fn_sync:
     def fn_customer_obj(self, WC):
 
         fn_name = WC['billing']['first_name'] + WC['billing']['last_name']
+        if fn_name is None or fn_name == '':
+            fn_name="Dummy name"
+
 
         fn_customer_object = {
             "Customer": {

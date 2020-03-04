@@ -787,6 +787,9 @@ class woo_fn_sync:
     def fn_customer_obj(self, WC):
 
         fn_name = WC['billing']['first_name'] + WC['billing']['last_name']
+        if fn_name is None or fn_name == '':
+            fn_name="Dummy name"
+
 
         fn_customer_object = {
             "Customer": {

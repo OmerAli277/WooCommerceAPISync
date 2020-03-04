@@ -43,7 +43,7 @@ urlpatterns = [
 
 	path('customer-settings/', views.CustomerSettingsView.as_view(), name = "customer-settings"),
 
-	path('connect/fortnox/update/' , views.FortnoxSettingView.as_view(), name='fortnox-update'),
+	# path('connect/fortnox/update/' , views.FortnoxSettingView.as_view(), name='fortnox-update'),
 
     path('users/', views.UserListView.as_view(), name='user-list'),
 

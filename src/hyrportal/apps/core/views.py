@@ -134,8 +134,6 @@ def signup(request):
                                                                 sales_account_12  = 0,
                                                                 sales_account_6  = 0,
                                                                 freight_account = "Null" )
-
-
                 user.save()
                 return redirect('/')
             else:
@@ -183,7 +181,7 @@ class FortnoxSettingView(UpdateView):
         "sales_account_6",
         "freight_account"
     ]
-    success_url = reverse_lazy('fortnox-update')
+    success_url = reverse_lazy('connect')
 
     # def get_context_data(self, **context):
     #     context = locals()
